@@ -1,0 +1,38 @@
+## Dockers setup for local development dependencies
+
+version: "3"
+services:
+  db:
+    image: postgres:10.7
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    tty: true
+    container_name: postgres-db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - ace_net
+  dbAdmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+    volumes:
+      - "./servers.json:/pgadmin4/servers.json"
+    tty: true
+    container_name: pgadmin
+    depends_on:
+      - db
+    networks:
+      - ace_net
+volumes:
+  db_data:
+networks:
+  ace_net:
+
