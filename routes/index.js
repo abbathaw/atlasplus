@@ -26,4 +26,23 @@ export default function routes(app, addon) {
         }
     );
     
+    app.get('/list-customers', addon.authenticate(), function (req, res) {
+            var spaceKey =  req.query['spaceKey']
+            res.render('list-customers', {
+                spaceKey: spaceKey
+            });
+        }
+    );
+    
+    app.get('/add-new-customer', addon.authenticate(), function (req, res) {
+        var spaceKey =  req.query['spaceKey']
+        res.render('new-customer', {
+            spaceKey: spaceKey
+        });
+    });
+    
+    app.get('/customCheck', function (req, res) {
+        res.json({answer: 42})
+    });
+    
 }

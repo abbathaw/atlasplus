@@ -1,0 +1,58 @@
+{{!< layout}}
+
+<div id="customers-list" style="margin-top: 50px;"></div>
+
+<script>
+    $(function(){
+        AP.request({
+            url: "/rest/api/content/",
+            data: {
+                "type": 'ac:my-app:customer',
+                "spaceKey": "{{spaceKey}}",
+                "expand": "children"
+            },
+            success: function(response){
+                let customers = JSON.parse(response).results;
+                customers.forEach(function(customer) {
+                    AP.request({
+                        url: `/rest/api/content/${customer.id}/property/customer-data`,
+                        success: function(jsonData) {
+                            jsonData = JSON.parse(jsonData)
+                            $("#customers-list").append('<div id="' + jsonData.id +'" class="company"><img src="' + jsonData.value.logo + '" alt="Logo"><div class="company-name">' + jsonData.value.companyName + '</div><div class="description">' + jsonData.value.description + '</div><div class="website">' + jsonData.value.website + '</div></div>')
+                        }
+                    });
+                });
+            },
+            error: function(err){
+                console.log("Err in fetching customers - ", error)
+            }
+        });
+    })
+</script>
+
+<button id="add-customer">Add a new Customer</button>
+
+<script>
+    $('#add-customer').on('click', function(){
+        AP.dialog.create({
+            key: 'newCustomer',
+            chrome: false
+        })
+    });
+
+    AP.events.onPublic('customerDataEvent', function(args){
+        AP.request({
+            url: '/rest/api/content',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(args),
+            success: function(customer){
+                customer = JSON.parse(customer);
+                console.log("Customer successfully persisted to Confluence", customer);
+            },
+            error: function(err){
+                console.log("content error - ", err);
+            }
+        });
+    });
+</script>
