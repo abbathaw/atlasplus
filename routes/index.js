@@ -1,5 +1,5 @@
 import * as macroController from '../controllers/macroController';
-import studioRouter from './studio';
+import studioRouter from './studioRouter';
 
 export default function routes(app, addon) {
     // Redirect root path to /atlassian-connect.json,
