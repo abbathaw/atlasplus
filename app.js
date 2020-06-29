@@ -25,6 +25,7 @@ import path from 'path';
 import os from 'os';
 import helmet from 'helmet';
 import nocache from 'nocache';
+import favicon from 'serve-favicon';
 
 // Routes live here; this is the C in MVC
 import routes from './routes';
@@ -76,6 +77,9 @@ app.use(express.static(staticDir));
 // Atlassian security policy requirements
 // http://go.atlassian.com/security-requirements-for-cloud-apps
 app.use(nocache());
+
+//favicon
+app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 
 // Show nicer errors in dev mode
 if (devEnv) app.use(errorHandler());
