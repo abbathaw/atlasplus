@@ -41,7 +41,8 @@ export default function routes(app, addon) {
         });
     });
     
-    app.get('/customCheck', function (req, res) {
+    app.get('/customCheck', addon.authenticate(), function (req, res) {
+        console.log("request", req)
         res.json({answer: 42})
     });
     
