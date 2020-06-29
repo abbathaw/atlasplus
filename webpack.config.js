@@ -1,5 +1,5 @@
 const path = require('path');
-const OUTPUT_DIR = path.join(__dirname, 'public/js');
+const OUTPUT_DIR = path.join(__dirname, 'public/js/react');
 
 
 module.exports = {
