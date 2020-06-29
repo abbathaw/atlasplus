@@ -10,7 +10,8 @@
         "installed": "/installed"
     },
     "scopes": [
-        "READ"
+        "READ",
+        "WRITE"
     ],
     "modules": {
         "generalPages": [
@@ -21,6 +22,28 @@
                     "value": "Hello World"
                 },
                 "url": "/hello-world",
+                "conditions": [{
+                    "condition": "user_is_logged_in"
+                }]
+            },
+            {
+                "key": "customersViewer",
+                "location": "",
+                "name": {
+                    "value": "Customers View"
+                },
+                "url": "/view-customer?contentId={content.id}",
+                "conditions": [{
+                    "condition": "user_is_logged_in"
+                }]
+            },
+            {
+                "key": "customerList",
+                "location": "",
+                "name": {
+                    "value": "Customers List"
+                },
+                "url": "/list-customers?spaceKey={space.key}",
                 "conditions": [{
                     "condition": "user_is_logged_in"
                 }]
@@ -38,6 +61,48 @@
                 },
                 "outputType": "block",
                 "bodyType": "none"
+            }
+        ],
+        "customContent": [
+            {
+                "key": "customer",
+                "name": {
+                    "value": "Customers"
+                },
+                "apiSupport": {
+                    "supportedContainerTypes": [
+                        "space"
+                    ],
+                    "indexing" : {
+                        "enabled" : true
+                    }
+                },
+                "uiSupport": {
+                    "listViewComponent": {
+                        "moduleKey": "customerList"
+                    },
+                    "contentViewComponent": {
+                        "moduleKey": "customersViewer"
+                    },
+                    "icons": {
+                        "item": {
+                            "url": "images/customers.png"
+                        }
+                    }
+                }
+            }
+        ],
+        "dialogs": [
+            {
+                "key": "newCustomer",
+                "url": "/add-new-customer?spaceKey={space.key}",
+                "options": {
+                    "height": "420px",
+                    "width": "600px",
+                    "header": {
+                        "value": "Add a new customer"
+                    }
+                }
             }
         ]
     }
