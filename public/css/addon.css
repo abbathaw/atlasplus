@@ -14,9 +14,9 @@
 
 .main-panel .aui-page-panel-item {
   padding: 20px 40px 20px 0;
-  height: 100px;
+  height: 100%;
 }
 
-#somePara {
-  background: white;
+body {
+  background: none;
 }

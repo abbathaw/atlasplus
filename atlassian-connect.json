@@ -1,13 +1,14 @@
 {
-    "key": "my-app",
-    "name": "My app",
-    "description": "My very first app",
+    "key": "atlasplus",
+    "name": "Atlas Plus Video Studio",
+    "description": "The ultimate video solution for all of your needs",
     "baseUrl": "{{localBaseUrl}}",
     "authentication": {
         "type": "jwt"
     },
     "lifecycle": {
-        "installed": "/installed"
+        "installed": "/installed",
+        "uninstalled": "/uninstalled"
     },
     "scopes": [
         "READ",
@@ -16,93 +17,60 @@
     "modules": {
         "generalPages": [
             {
-                "key": "hello-world-page-confluence",
-                "location": "system.header/left",
-                "name": {
-                    "value": "Hello World"
-                },
-                "url": "/hello-world",
-                "conditions": [{
-                    "condition": "user_is_logged_in"
-                }]
-            },
-            {
-                "key": "customersViewer",
+                "key": "videoStudio",
                 "location": "",
                 "name": {
-                    "value": "Customers View"
+                    "value": "Video Studio"
                 },
-                "url": "/view-customer?contentId={content.id}",
+                "url": "/video-studio?spaceKey={space.key}",
                 "conditions": [{
                     "condition": "user_is_logged_in"
                 }]
-            },
-            {
-                "key": "customerList",
-                "location": "",
-                "name": {
-                    "value": "Customers List"
-                },
-                "url": "/list-customers?spaceKey={space.key}",
-                "conditions": [{
-                    "condition": "user_is_logged_in"
-                }]
-            }
-        ],
-        "dynamicContentMacros": [
-            {
-                "key": "helloworld-macro",
-                "name": {
-                    "value": "Hello World Macro"
-                },
-                "url": "/macro",
-                "description": {
-                    "value": "Says 'Hello World'."
-                },
-                "outputType": "block",
-                "bodyType": "none"
             }
         ],
         "customContent": [
             {
-                "key": "customer",
+                "key": "studio",
                 "name": {
-                    "value": "Customers"
+                    "value": "Video Studio"
                 },
                 "apiSupport": {
                     "supportedContainerTypes": [
                         "space"
-                    ],
-                    "indexing" : {
-                        "enabled" : true
-                    }
+                    ]
                 },
                 "uiSupport": {
-                    "listViewComponent": {
-                        "moduleKey": "customerList"
+                    "listViewComponent":{
+                        "moduleKey": "videoStudio"
                     },
                     "contentViewComponent": {
-                        "moduleKey": "customersViewer"
+                        "moduleKey": "videoStudio"
                     },
                     "icons": {
                         "item": {
-                            "url": "images/customers.png"
+                            "url": "images/logo.png"
                         }
                     }
                 }
             }
         ],
-        "dialogs": [
+        "dynamicContentMacros": [
             {
-                "key": "newCustomer",
-                "url": "/add-new-customer?spaceKey={space.key}",
-                "options": {
-                    "height": "420px",
-                    "width": "600px",
-                    "header": {
-                        "value": "Add a new customer"
-                    }
-                }
+                "key": "video-macro",
+                "name": {
+                    "value": "Video Macro"
+                },
+                "url": "/video-macro",
+                "description": {
+                    "value": "Embed a video uploaded through the Video Studio"
+                },
+                "icon": {
+                    "width": 80,
+                    "height": 80,
+                    "url": "images/logo.png"
+                },
+                "outputType": "block",
+                "bodyType": "none"
             }
         ]
     }
