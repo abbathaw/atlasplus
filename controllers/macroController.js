@@ -1,5 +1,3 @@
-
-
 export const videoMacro = (req, res) => {
-	res.render('video-macro')
+  res.render("video-macro")
 }
