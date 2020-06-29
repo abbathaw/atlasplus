@@ -9,7 +9,7 @@
     $(function(){
         AP.context.getToken(function(token) {
             const headers = { Authorization: `JWT ${token}` };
-            axios.get(`${BASE_URL}customCheck`, {headers}).then(function(response) {
+            axios.get(`${BASE_URL}video-studio/customCheck`, {headers}).then(function(response) {
                 console.log(`GET: Here's the response`, response.data);
             }).catch(function(e) {
                 console.error("someError", e);
