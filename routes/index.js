@@ -10,6 +10,8 @@ export default function routes(app, addon) {
 
     app.get('/video-macro', addon.authenticate(), macroController.videoMacro);
     
-    app.use('/video-studio', addon.authenticate(), studioRouter)
+    app.use('/video-studio',
+        // addon.authenticate(), //TODO: enable before deploying
+        studioRouter)
   
 }

@@ -5,7 +5,7 @@ const OUTPUT_DIR = path.join(__dirname, 'public/js');
 module.exports = {
 	mode: "development",
 	entry: {
-		'App': './frontend/App.js',
+		'Studio': './client/Studio.js',
 	},
 	output: {
 		path: OUTPUT_DIR,
