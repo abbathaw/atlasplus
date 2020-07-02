@@ -1,77 +1,74 @@
 {
-    "key": "atlasplus",
-    "name": "Atlas Plus Video Studio",
-    "description": "The ultimate video solution for all of your needs",
-    "baseUrl": "{{localBaseUrl}}",
-    "authentication": {
-        "type": "jwt"
-    },
-    "lifecycle": {
-        "installed": "/installed",
-        "uninstalled": "/uninstalled"
-    },
-    "scopes": [
-        "READ",
-        "WRITE"
-    ],
-    "modules": {
-        "generalPages": [
-            {
-                "key": "videoStudio",
-                "location": "",
-                "name": {
-                    "value": "Video Studio"
-                },
-                "url": "/video-studio?spaceKey={space.key}",
-                "conditions": [{
-                    "condition": "user_is_logged_in"
-                }]
-            }
-        ],
-        "customContent": [
-            {
-                "key": "studio",
-                "name": {
-                    "value": "Video Studio"
-                },
-                "apiSupport": {
-                    "supportedContainerTypes": [
-                        "space"
-                    ]
-                },
-                "uiSupport": {
-                    "listViewComponent":{
-                        "moduleKey": "videoStudio"
-                    },
-                    "contentViewComponent": {
-                        "moduleKey": "videoStudio"
-                    },
-                    "icons": {
-                        "item": {
-                            "url": "images/logo.png"
-                        }
-                    }
-                }
-            }
-        ],
-        "dynamicContentMacros": [
-            {
-                "key": "video-macro",
-                "name": {
-                    "value": "Video Macro"
-                },
-                "url": "/video-macro",
-                "description": {
-                    "value": "Embed a video uploaded through the Video Studio"
-                },
-                "icon": {
-                    "width": 80,
-                    "height": 80,
-                    "url": "images/logo.png"
-                },
-                "outputType": "block",
-                "bodyType": "none"
-            }
+  "key": "atlasplus",
+  "name": "Atlas Plus Video Studio",
+  "description": "The ultimate video solution for all of your needs",
+  "baseUrl": "https://atlasplus.ap.ngrok.io/",
+  "authentication": {
+    "type": "jwt"
+  },
+  "lifecycle": {
+    "installed": "/installed",
+    "uninstalled": "/uninstalled"
+  },
+  "scopes": ["READ", "WRITE"],
+  "modules": {
+    "generalPages": [
+      {
+        "key": "videoStudio",
+        "location": "",
+        "name": {
+          "value": "Video Studio"
+        },
+        "url": "/video-studio?spaceKey={space.key}",
+        "conditions": [
+          {
+            "condition": "user_is_logged_in"
+          }
         ]
-    }
+      }
+    ],
+    "customContent": [
+      {
+        "key": "studio",
+        "name": {
+          "value": "Video Studio"
+        },
+        "apiSupport": {
+          "supportedContainerTypes": ["space"]
+        },
+        "uiSupport": {
+          "listViewComponent": {
+            "moduleKey": "videoStudio"
+          },
+          "contentViewComponent": {
+            "moduleKey": "videoStudio"
+          },
+          "icons": {
+            "item": {
+              "url": "images/logo.png"
+            }
+          }
+        }
+      }
+    ],
+    "dynamicContentMacros": [
+      {
+        "key": "video-macro",
+        "name": {
+          "value": "Video Macro"
+        },
+        "url": "/video-macro",
+        "description": {
+          "value": "Embed a video uploaded through the Video Studio"
+        },
+        "icon": {
+          "width": 80,
+          "height": 80,
+          "url": "images/logo.png"
+        },
+        "outputType": "block",
+        "bodyType": "none"
+      }
+    ]
+  }
 }

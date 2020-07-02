@@ -1,5 +1,5 @@
 const express = require("express")
-
+import db from "../models"
 const studioRouter = express.Router()
 
 studioRouter.get("/", function (req, res) {
@@ -11,7 +11,10 @@ studioRouter.get("/", function (req, res) {
 
 studioRouter.get("/customCheck", function (req, res) {
   console.log("request", req)
-  res.json({ answer: 42 })
+  db.addon._get({ id: 2 }).then(function (favs) {
+    console.log("Check DB ccccc", favs)
+    res.json({ answer: favs })
+  })
 })
 
 export default studioRouter
