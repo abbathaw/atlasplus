@@ -4,11 +4,8 @@
     "errorTemplate": true,
     "store": {
       "adapter": "sequelize",
-      "dialect": "postgres",
-      "url": "postgres://postgres:postgres@db:5432/postgres",
-      "username": "postgres",
-      "password": "postgres",
-      "database": "postgres"
+      "dialect": "sqlite",
+      "type": "memory"
     }
   },
   "production": {

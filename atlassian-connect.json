@@ -2,7 +2,11 @@
   "key": "atlasplus",
   "name": "Atlas Plus Video Studio",
   "description": "The ultimate video solution for all of your needs",
-  "baseUrl": "https://atlasplus.ap.ngrok.io/",
+  "baseUrl": "{{localBaseUrl}}",
+  "links": {
+    "self": "{{localBaseUrl}}/atlassian-connect.json",
+    "homepage": "{{localBaseUrl}}/atlassian-connect.json"
+  },
   "authentication": {
     "type": "jwt"
   },
@@ -69,6 +73,49 @@
         "outputType": "block",
         "bodyType": "none"
       }
-    ]
+    ],
+    "adminPages": [
+      {
+        "url": "/get-started",
+        "key": "get-started-admin-page",
+        "location": "system.admin/atlasplus-plugin-admin-menu-section",
+        "name": {
+          "value": "Get Started"
+        }
+      },
+      {
+        "url": "/configuration",
+        "key": "configuration-admin-page",
+        "location": "system.admin/atlasplus-plugin-admin-menu-section",
+        "weight": 105,
+        "name": {
+          "value": "Configuration"
+        }
+      }
+    ],
+    "webSections": [
+      {
+        "key": "atlasplus-plugin-admin-menu-section",
+        "location": "system.admin",
+        "weight": 100,
+        "name": {
+          "value": "Atlas+"
+        }
+      }
+    ],
+    "postInstallPage": {
+      "url": "/get-started",
+      "key": "get-started-post-install",
+      "name": {
+        "value": "Get Started: Atlas+ Video Studio"
+      }
+    },
+    "configurePage": {
+      "url": "/configuration",
+      "key": "config-page-post-install",
+      "name": {
+        "value": "Atlas+ Configuration"
+      }
+    }
   }
 }
