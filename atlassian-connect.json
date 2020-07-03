@@ -59,11 +59,11 @@
       {
         "key": "video-macro",
         "name": {
-          "value": "Video Macro"
+          "value": "Video"
         },
-        "url": "/video-macro",
+        "url": "/video-macro?macroId={macro.id}",
         "description": {
-          "value": "Embed a video uploaded through the Video Studio"
+          "value": "Embed a video uploaded through the Video Studio."
         },
         "icon": {
           "width": 80,
@@ -71,7 +71,51 @@
           "url": "images/logo.png"
         },
         "outputType": "block",
-        "bodyType": "none"
+        "bodyType": "none",
+        "categories": ["media", "confluence-content", "external-content"],
+        "parameters": [
+          {
+            "identifier": "title",
+            "name": {
+              "value": "Video Title"
+            },
+            "type": "string",
+            "required": true,
+            "multiple": false
+          },
+          {
+            "identifier": "users",
+            "name": {
+              "value": "Assigned User(s)"
+            },
+            "type": "username",
+            "required": true,
+            "multiple": true
+          },
+          {
+            "identifier": "video",
+            "name": {
+              "value": "Video"
+            },
+            "type": "enum",
+            "required": true,
+            "multiple": false,
+            "defaultValue": "video1",
+            "values": ["video1", "video2", "video3", "video4"],
+            "hidden": false
+          }
+        ],
+        "editor": {
+          "url": "/editor",
+          "editTitle": {
+            "value": "Edit 'Video' Macro"
+          },
+          "insertTitle": {
+            "value": "Insert 'Video' Macro"
+          },
+          "width": "650px",
+          "height": "400px"
+        }
       }
     ],
     "adminPages": [
