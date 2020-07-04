@@ -2,19 +2,19 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Video = sequelize.define("Video", {
-    uuid: {
+    id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
     },
     ownerId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    fileId: DataTypes.UUID,
     name: DataTypes.STRING,
-    size_in_mb: DataTypes.DECIMAL,
+    sizeInMb: DataTypes.DECIMAL,
     status: DataTypes.STRING,
-    spaceKey: DataTypes.STRING,
+    spaceId: DataTypes.STRING,
     drm: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

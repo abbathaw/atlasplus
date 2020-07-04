@@ -3,22 +3,21 @@
 <section style="margin-top: 10px">
     <div id="studio-container"></div>
 </section>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-    const BASE_URL = "{{localBaseUrl}}";
-    const spaceKey = "{{spaceKey}}";
-    console.log("BASE URL is ", BASE_URL)
-    $(function(){
-        AP.context.getToken(function(token) {
-            const headers = { Authorization: `JWT ${token}` };
-            axios.get(`${BASE_URL}video-studio/customCheck`, {headers}).then(function(response) {
-                console.log(`GET: Here's the response`, response.data);
-            }).catch(function(e) {
-                console.error("someError", e);
-            })
-        })
-    })
-</script>
+<!--<script>-->
+<!--    const BASE_URL = "{{localBaseUrl}}";-->
+<!--    const spaceKey = "{{spaceKey}}";-->
+<!--    console.log("BASE URL is ", BASE_URL)-->
+<!--    $(function(){-->
+<!--        AP.context.getToken(function(token) {-->
+<!--            const headers = { Authorization: `JWT ${token}` };-->
+<!--            axios.get(`${BASE_URL}video-studio/customCheck`, {headers}).then(function(response) {-->
+<!--                console.log(`GET: Here's the response`, response.data);-->
+<!--            }).catch(function(e) {-->
+<!--                console.error("someError", e);-->
+<!--            })-->
+<!--        })-->
+<!--    })-->
+<!--</script>-->
 
 <!-- Load our React component. -->
 <script src="/js/react/Studio.js"></script>

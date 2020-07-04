@@ -6,3 +6,4 @@ node_modules
 credentials.json
 /public/js/react/
 /credentials2.json
+.env

@@ -2,14 +2,9 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Tenant = sequelize.define("Tenant", {
-    uuid: {
+    id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    clientKey: {
-      type: DataTypes.STRING,
-      allowNull: false,
     },
     baseUrl: DataTypes.STRING,
     enabled: {

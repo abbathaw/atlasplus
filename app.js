@@ -30,7 +30,7 @@ import favicon from "serve-favicon"
 
 // Routes live here; this is the C in MVC
 import routes from "./routes"
-
+require("dotenv").config()
 // Bootstrap Express and atlassian-connect-express
 const app = express()
 const addon = ace(app)
