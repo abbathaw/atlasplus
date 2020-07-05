@@ -118,6 +118,41 @@ export const getJobTemplate = (input, output) => {
             },
           },
         },
+        {
+          Name: "File Group",
+          Outputs: [
+            {
+              ContainerSettings: {
+                Container: "RAW",
+              },
+              VideoDescription: {
+                ScalingBehavior: "DEFAULT",
+                TimecodeInsertion: "DISABLED",
+                AntiAlias: "ENABLED",
+                Sharpness: 50,
+                CodecSettings: {
+                  Codec: "FRAME_CAPTURE",
+                  FrameCaptureSettings: {
+                    FramerateNumerator: 33,
+                    FramerateDenominator: 80,
+                    MaxCaptures: 4,
+                    Quality: 80,
+                  },
+                },
+                DropFrameTimecode: "ENABLED",
+                ColorMetadata: "INSERT",
+              },
+              Extension: "jpg",
+              NameModifier: "thumbnail",
+            },
+          ],
+          OutputGroupSettings: {
+            Type: "FILE_GROUP_SETTINGS",
+            FileGroupSettings: {
+              Destination: `${output}/thumbnails/`,
+            },
+          },
+        },
       ],
       AdAvailOffset: 0,
       Inputs: [
