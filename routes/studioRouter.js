@@ -1,6 +1,9 @@
 const express = require("express")
 import db from "../models"
-import { saveVideo, uploadVideo } from "../controllers/studioController"
+import {
+  saveVideo,
+  getUploadPresignedUrl,
+} from "../controllers/studioController"
 const studioRouter = express.Router()
 
 studioRouter.get("/", function (req, res) {
@@ -18,7 +21,7 @@ studioRouter.get("/customCheck", function (req, res) {
   })
 })
 
-studioRouter.post("/getUploadToken", uploadVideo)
+studioRouter.post("/getPresignedUploadUrl", getUploadPresignedUrl)
 
 studioRouter.post("/saveVideo", saveVideo)
 

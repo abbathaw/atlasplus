@@ -1,9 +1,10 @@
 import { parseJwtInHeader } from "../services/jwt"
 import { getUploadUrl } from "../services/aws"
-import { saveNewVideo } from "../services/videoService"
+import { getFileExtension, saveNewVideo } from "../services/videoService"
+import { triggerEncoderJob } from "../services/jobService"
 const { v4: uuidv4 } = require("uuid")
 
-export const uploadVideo = async (req, res) => {
+export const getUploadPresignedUrl = async (req, res) => {
   const identity = parseJwtInHeader(req)
   console.log("req", JSON.stringify(identity))
   const tenantId = identity.iss
@@ -11,16 +12,15 @@ export const uploadVideo = async (req, res) => {
   const { space } = identity.context.confluence
   const { key: spaceKey, id: spaceId } = space
 
-  const originalFileName = req.body.fileName
   const fileType = req.body.fileType
-  const extension = originalFileName.split(".").pop()
+  const extension = getFileExtension(fileType)
 
   const fileName = uuidv4()
   const videoId = uuidv4()
 
   const file = {
     fileName,
-    extension: extension ? `.${extension}` : "",
+    extension,
     fileType,
   }
 
@@ -44,12 +44,28 @@ export const saveVideo = async (req, res) => {
   const fileId = req.body.fileId
   const videoId = req.body.videoId
   const title = req.body.title
+  const fileType = req.body.fileType
   const { fileSize } = req.body
   const size = fileSize && !isNaN(fileSize) ? fileSize / 1000000 : 0
 
   try {
     console.log("Saving video to db")
-    await saveNewVideo(tenantId, userId, spaceId, fileId, videoId, title, size)
+    await saveNewVideo(
+      tenantId,
+      userId,
+      spaceId,
+      fileId,
+      videoId,
+      title,
+      size,
+      fileType
+    )
+    await triggerEncoderJob(
+      tenantId,
+      videoId,
+      fileId,
+      getFileExtension(fileType)
+    )
     res.status(201).send("created new video")
   } catch (e) {
     console.error("An error occurred saving the new video", e)

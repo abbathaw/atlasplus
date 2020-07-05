@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     sizeInMb: DataTypes.DECIMAL,
     status: DataTypes.STRING,
+    sourceFileType: DataTypes.STRING,
     spaceId: DataTypes.STRING,
     drm: {
       type: DataTypes.BOOLEAN,

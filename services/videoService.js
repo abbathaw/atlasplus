@@ -7,7 +7,8 @@ export const saveNewVideo = async (
   fileId,
   videoId,
   name,
-  size
+  size,
+  fileType
 ) => {
   return await db.Video.create({
     id: videoId,
@@ -17,8 +18,19 @@ export const saveNewVideo = async (
     name,
     sizeInMb: size,
     status: "uploaded",
+    sourceFileType: fileType,
     spaceId,
   }).then((created) => {
     console.log("created a new tenant with tenantI", created)
   })
+}
+
+export const getFileExtension = (fileType) => {
+  if (fileType === "video/quicktime") {
+    return ".mov"
+  } else if (fileType === "video/mp4") {
+    return ".mp4"
+  } else {
+    return ""
+  }
 }
