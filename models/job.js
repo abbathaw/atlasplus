@@ -2,7 +2,7 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Job = sequelize.define("Job", {
-    uuid: {
+    id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,

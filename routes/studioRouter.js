@@ -1,5 +1,6 @@
 const express = require("express")
 import db from "../models"
+import { saveVideo, uploadVideo } from "../controllers/studioController"
 const studioRouter = express.Router()
 
 studioRouter.get("/", function (req, res) {
@@ -11,10 +12,14 @@ studioRouter.get("/", function (req, res) {
 
 studioRouter.get("/customCheck", function (req, res) {
   console.log("request", req)
-  db.addon._get({ id: 2 }).then(function (favs) {
+  db.addon._get({ id: 1 }).then(function (favs) {
     console.log("Check DB ccccc", favs)
     res.json({ answer: favs })
   })
 })
+
+studioRouter.post("/getUploadToken", uploadVideo)
+
+studioRouter.post("/saveVideo", saveVideo)
 
 export default studioRouter
