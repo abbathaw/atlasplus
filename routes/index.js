@@ -9,12 +9,22 @@ export default function routes(app, addon) {
     res.redirect("/atlassian-connect.json")
   })
 
+  app.get("/get-started", addon.authenticate(), function (req, res) {
+    res.render("admin/get-started")
+  })
+
+  app.get("/configuration", addon.authenticate(), function (req, res) {
+    res.render("admin/configuration")
+  })
+
   app.get(
     "/video-macro",
     addon.authenticate(),
     tenantValidator,
     macroController.videoMacro
   )
+
+  app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
 
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 }

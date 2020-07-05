@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react"
 import * as ReactDOM from "react-dom"
 import Tabs from "@atlaskit/tabs"
-import VideosList from "./Components/VideosList"
-import UploadVideo from "./Components/UploadVideo"
+import VideosList from "./VideosList"
+import UploadVideo from "./UploadVideo"
 
 const TabSelectContext = React.createContext(null)
 export const useTabSelectContext = () => useContext(TabSelectContext)

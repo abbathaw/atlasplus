@@ -1,5 +1,5 @@
 import React from "react"
-import { useTabSelectContext } from "../Studio"
+import { useTabSelectContext } from "./Studio"
 
 const VideosList = () => {
   const { setSelectedTab } = useTabSelectContext()
