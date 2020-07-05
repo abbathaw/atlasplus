@@ -1,5 +1,6 @@
 import * as macroController from "../controllers/macroController"
 import studioRouter from "./studioRouter"
+import { tenantValidator } from "../services/tenantChecker"
 
 export default function routes(app, addon) {
   // Redirect root path to /atlassian-connect.json,
@@ -8,11 +9,22 @@ export default function routes(app, addon) {
     res.redirect("/atlassian-connect.json")
   })
 
-  app.get("/video-macro", addon.authenticate(), macroController.videoMacro)
+  app.get("/get-started", addon.authenticate(), function (req, res) {
+    res.render("admin/get-started")
+  })
 
-  app.use(
-    "/video-studio",
-    // addon.authenticate(), //TODO: enable before deploying
-    studioRouter
+  app.get("/configuration", addon.authenticate(), function (req, res) {
+    res.render("admin/configuration")
+  })
+
+  app.get(
+    "/video-macro",
+    addon.authenticate(),
+    tenantValidator,
+    macroController.videoMacro
   )
+
+  app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
+
+  app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 }
