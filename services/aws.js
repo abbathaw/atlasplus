@@ -44,7 +44,7 @@ export const triggerMediaConvertJob = (contextPath, inputPath) => {
     .promise()
 }
 
-export const getThumbnails = (tenantId, videoId) => {
+export const getThumbnails = (tenantId, videoId, cb) => {
   AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -55,13 +55,23 @@ export const getThumbnails = (tenantId, videoId) => {
   const s3 = new AWS.S3({ signatureVersion: "v4", params: { Bucket: bucket } })
   const prefix = `${OUTPUT_PREFIX}/${tenantId}/${videoId}/thumbnails/`
 
-  const params = {
+  const listObjectsParams = {
     Bucket: bucket,
     Prefix: prefix,
   }
-  s3.listObjectsV2(params, (err, data) => {
+
+  // get the required objects keys
+  s3.listObjectsV2(listObjectsParams, async (err, data) => {
     console.log("data------>", data)
     console.log("Contents------>", data.Contents)
-    return data.Contents
+    const keys = data.Contents.map((content) => content.Key)
+    const getObjectParams = {
+      Bucket: bucket,
+      Key: keys[0],
+      Expires: 30 * 60,
+    }
+    // get the signed url for one object key
+    // TODO: Refactor with Promise.all() to get all objects (all thumbnails)
+    cb(await s3.getSignedUrlPromise("getObject", getObjectParams))
   })
 }

@@ -16,23 +16,38 @@ const VideosList = () => {
       const { data: videos } = await axios.get(`video-studio/spaceVideos`, {
         headers: { Authorization: `JWT ${token}` },
       })
-      console.log("RESSS-------------->", videos)
+      console.log("videos-------------->", videos)
+      const videosWithThumbnails = Promise.all(
+        videos.map(async (video) => {
+          return {
+            ...video,
+            thumbnailUrl: await getVideoThumbnails(video.id),
+          }
+        })
+      )
+
+      console.log(
+        "videos with thumbnails-------------->",
+        await videosWithThumbnails
+      )
       setIsLoading(false)
-      setVideos(videos)
+      setVideos(await videosWithThumbnails)
     })
   }, [])
 
-  const getVideoThumbnails = (videoId) =>
-    AP.context.getToken(async (token) => {
-      const {
-        data: thumbnails,
-      } = await axios.get(`video-studio/videoThumbnails?videoId=${videoId}`, {
-        headers: { Authorization: `JWT ${token}` },
+  const getVideoThumbnails = (videoId) => {
+    return new Promise((resolve) => {
+      AP.context.getToken(async (token) => {
+        const {
+          data: { thumbnailUrl },
+        } = await axios.get(`video-studio/videoThumbnails?videoId=${videoId}`, {
+          headers: { Authorization: `JWT ${token}` },
+        })
+        console.log("url-------------->", thumbnailUrl)
+        resolve(thumbnailUrl)
       })
-      console.log("Thumbs-------------->", thumbnails)
-      return thumbnails[0].Key
     })
-
+  }
   const { setSelectedTab } = useTabSelectContext()
 
   return (
@@ -49,7 +64,7 @@ const VideosList = () => {
                     <Grid>
                       <GridColumn medium={3}>
                         <Thumbnail
-                          src={getVideoThumbnails(video.id)}
+                          src={video.thumbnailUrl}
                           alt={"thumbnail"}
                           style={{ width: "100%" }}
                         />
@@ -115,6 +130,7 @@ const Thumbnail = styled.img`
   padding: 2px 8px;
   border-radius: 5px 5px 0 0;
   max-width: 300px;
+  margin: 10px 2px 0 2px;
 `
 
 export default VideosList

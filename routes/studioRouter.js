@@ -1,5 +1,3 @@
-import { getThumbnails } from "../services/aws"
-
 const express = require("express")
 import db from "../models"
 import {
