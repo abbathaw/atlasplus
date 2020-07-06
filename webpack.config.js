@@ -11,6 +11,7 @@ module.exports = {
     Configuration: "./src/js/components/admin/Configuration.js",
     VideoMacro: "./src/js/components/macro/VideoMacro.js",
     VideoMacroEditor: "./src/js/components/macro/VideoMacroEditor.js",
+    JustPlayer: "./src/js/components/playertest/JustPlayer.js",
   },
   output: {
     path: OUTPUT_DIR,

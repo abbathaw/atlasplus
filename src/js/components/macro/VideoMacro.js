@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import * as ReactDOM from "react-dom"
+import PlayerContainer from "./components/PlayerContainer"
 
 const VideoMacro = () => {
   const [title, setTitle] = useState("")
@@ -17,12 +18,8 @@ const VideoMacro = () => {
 
   return (
     <div className="aui-item">
-      <p>Hi from video macro with:</p>
-      <ol id="somePara">
-        <li>title={title}</li>
-        <li>users={assignedUsers}</li>
-        <li>video={video}</li>
-      </ol>
+      <h5>{title}</h5>
+      <PlayerContainer video={video} />
     </div>
   )
 }

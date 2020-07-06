@@ -75,7 +75,8 @@ const VideosList = () => {
                             <b>{video.name}</b>
                           </h4>
                           <p>
-                            <b>Size:</b> {video.sizeInMb.toFixed(2)} MB
+                            <b>Size:</b> {parseFloat(video.sizeInMb).toFixed(2)}{" "}
+                            MB
                           </p>
                           <p>
                             <b>Status:</b> {video.status}

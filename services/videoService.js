@@ -1,5 +1,9 @@
 import db from "../models"
 
+const getVideo = (videoId) => {
+  return db.Video.findByPk(videoId)
+}
+
 const saveNewVideo = async (
   tenantId,
   userId,
@@ -46,4 +50,4 @@ const getFileExtension = (fileType) => {
   }
 }
 
-export { saveNewVideo, getFileExtension, getTenantVideosBySpace }
+export { saveNewVideo, getFileExtension, getTenantVideosBySpace, getVideo }

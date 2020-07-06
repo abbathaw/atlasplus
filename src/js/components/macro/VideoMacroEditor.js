@@ -27,11 +27,12 @@ const VideoMacroEditor = () => {
         console.log("space id", body.id)
         //get Token and call backend
         AP.context.getToken(async (token) => {
-          const {
-            data: spaceVideos,
-          } = await axios.get(`video-studio/spaceVideos?spaceId=${body.id}`, {
-            headers: { Authorization: `JWT ${token}` },
-          })
+          const { data: spaceVideos } = await axios.get(
+            `video-studio/spaceVideos?spaceId=${body.id}`,
+            {
+              headers: { Authorization: `JWT ${token}` },
+            }
+          )
           console.log("available videos-------------->", spaceVideos)
           setIsLoading(false)
           setVideos(
