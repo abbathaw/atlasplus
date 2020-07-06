@@ -26,10 +26,15 @@ export const tenantValidator = function (req, res, next) {
 
             const baseUrl = tenantInAddon.baseUrl
 
-            db.Tenant.create({ id: tenantId, baseUrl }).then((created) => {
-              console.log("created a new tenant with tenantI", created)
-              next()
-            })
+            db.Tenant.create({ id: tenantId, baseUrl })
+              .then((created) => {
+                console.log("created a new tenant with tenantI", created)
+                next()
+              })
+              .catch((error) => {
+                console.log("error creating new Tenant", error)
+                res.status(404).send(error)
+              })
           } else {
             console.log("No tenant found in addon settings", tenantInAddon)
             res.status(401).send("No tenant found")
@@ -39,5 +44,6 @@ export const tenantValidator = function (req, res, next) {
     })
     .catch((e) => {
       console.error("couldn't find tenant got error", e)
+      res.status(404).send(e)
     })
 }

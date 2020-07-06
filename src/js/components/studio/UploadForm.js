@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Button from "@atlaskit/button"
 import styled from "styled-components"
 import Spinner from "@atlaskit/spinner"
@@ -7,8 +7,8 @@ import InlineMessage from "@atlaskit/inline-message"
 import { Progress } from "react-sweet-progress"
 import axios from "axios"
 
-let cancelToken = axios.CancelToken
-let source = cancelToken.source()
+// let cancelToken = axios.CancelToken
+// let source = cancelToken.source()
 
 const UploadForm = ({ resetForm }) => {
   const [title, setTitle] = useState("")
@@ -16,6 +16,7 @@ const UploadForm = ({ resetForm }) => {
   const [error, setError] = useState("")
   const [fileUploading, setFileUploading] = useState(false)
   const [loaded, setLoaded] = useState(0)
+  const cancelToken = useRef(null)
 
   useEffect(() => {}, [])
 
@@ -38,6 +39,7 @@ const UploadForm = ({ resetForm }) => {
     console.log("data file", file)
 
     if (title && file) {
+      cancelToken.current = axios.CancelToken.source()
       setFileUploading(true)
 
       //get Token to call backend
@@ -72,11 +74,12 @@ const UploadForm = ({ resetForm }) => {
 
   const getUploadData = async (token) => {
     const body = {
-      fileName: file.name,
       fileType: file.type,
     }
     const headers = { Authorization: `JWT ${token}` }
-    return await axios.post(`video-studio/getUploadToken`, body, { headers })
+    return await axios.post(`video-studio/getPresignedUploadUrl`, body, {
+      headers,
+    })
   }
 
   const uploadVideo = async (uploadData) => {
@@ -87,7 +90,7 @@ const UploadForm = ({ resetForm }) => {
       onUploadProgress: (progressEvent) => {
         setLoaded((progressEvent.loaded / progressEvent.total) * 100)
       },
-      cancelToken: source.token,
+      cancelToken: cancelToken.current.token,
     }
     return await axios.put(uploadData.uploadUrl, file, uploadOptions)
   }
@@ -98,6 +101,7 @@ const UploadForm = ({ resetForm }) => {
       videoId: uploadData.videoId,
       title,
       fileSize: file.size,
+      fileType: file.type,
     }
     const headers = { Authorization: `JWT ${token}` }
     return await axios.post(`video-studio/saveVideo`, body, { headers })
@@ -108,7 +112,8 @@ const UploadForm = ({ resetForm }) => {
   }
 
   const cancelRequest = () => {
-    source.cancel("Upload cancelled by the user")
+    console.log("User trigger upload cancel")
+    cancelToken.current.cancel("Upload cancelled by the user")
     refreshForm()
   }
 
@@ -140,14 +145,16 @@ const UploadForm = ({ resetForm }) => {
               ></InlineMessage>
             </div>
           )}
-          <FileInput
-            onChange={(e) => setFile(e.target.files[0])}
-            placeholder="Video"
-            type="file"
-            name="file"
-            id="atlasPlus-video-input"
-            accept=".mov,.mp4"
-          />
+          {!fileUploading && (
+            <FileInput
+              onChange={(e) => setFile(e.target.files[0])}
+              placeholder="Video"
+              type="file"
+              name="file"
+              id="atlasPlus-video-input"
+              accept=".mov,.mp4"
+            />
+          )}
         </div>
         <div style={{ marginTop: "20px" }}>
           <Label for={"videoTitle"}>Video Title</Label>

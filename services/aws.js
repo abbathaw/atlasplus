@@ -1,5 +1,8 @@
+import { getJobTemplate } from "./mediaconvert/jobTemplate"
+
 const AWS = require("aws-sdk")
 export const UPLOAD_PREFIX = "source"
+export const OUTPUT_PREFIX = "output"
 
 export const getUploadUrl = async (accountId, videoId, file) => {
   AWS.config.update({
@@ -11,9 +14,6 @@ export const getUploadUrl = async (accountId, videoId, file) => {
   const bucket = process.env.S3_BUCKET_NAME
   const s3 = new AWS.S3({ signatureVersion: "v4", params: { Bucket: bucket } })
   const Key = `${UPLOAD_PREFIX}/${accountId}/${videoId}/${file.fileName}${file.extension}`
-  console.log("Bucket", bucket)
-  console.log("BUCKETTT", process.env.S3_BUCKET_NAME)
-  console.log("Key", Key)
   const params = {
     Bucket: bucket,
     Key,
@@ -21,4 +21,25 @@ export const getUploadUrl = async (accountId, videoId, file) => {
     ContentType: file.fileType,
   }
   return await s3.getSignedUrlPromise("putObject", params)
+}
+
+export const triggerMediaConvertJob = (contextPath, inputPath) => {
+  AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  })
+
+  AWS.config.mediaconvert = { endpoint: process.env.MEDIA_CONVERT_ENDPOINT }
+
+  const bucket = process.env.S3_BUCKET_NAME
+  const fullSourcePath = `s3://${bucket}/${UPLOAD_PREFIX}/${contextPath}/${inputPath}`
+  const outPutPath = `s3://${bucket}/${OUTPUT_PREFIX}/${contextPath}/`
+
+  const jobParams = getJobTemplate(fullSourcePath, outPutPath)
+
+  // Create a promise on a MediaConvert object
+  return new AWS.MediaConvert({ apiVersion: "2017-08-29" })
+    .createJob(jobParams)
+    .promise()
 }

@@ -8,7 +8,8 @@
       "url": "postgres://postgres:postgres@db:5432/postgres",
       "username": "postgres",
       "password": "postgres",
-      "database": "postgres"
+      "database": "postgres",
+      "logging": false
     }
   },
   "production": {

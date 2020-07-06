@@ -1,6 +1,8 @@
 import * as macroController from "../controllers/macroController"
 import studioRouter from "./studioRouter"
 import { tenantValidator } from "../services/tenantChecker"
+import { processSns } from "../controllers/snsController"
+const bodyParser = require("body-parser")
 
 export default function routes(app, addon) {
   // Redirect root path to /atlassian-connect.json,
@@ -27,4 +29,6 @@ export default function routes(app, addon) {
   app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
 
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
+
+  app.post("/snsTopic", bodyParser.text(), processSns)
 }
