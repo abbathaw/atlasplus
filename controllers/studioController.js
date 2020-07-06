@@ -1,10 +1,15 @@
 import { parseJwtInHeader } from "../services/jwt"
-import { getUploadUrl } from "../services/aws"
-import { getFileExtension, saveNewVideo } from "../services/videoService"
+import { getThumbnails, getUploadUrl } from "../services/aws"
+import {
+  getFileExtension,
+  getTenantVideosBySpace,
+  saveNewVideo,
+} from "../services/videoService"
 import { triggerEncoderJob } from "../services/jobService"
+
 const { v4: uuidv4 } = require("uuid")
 
-export const getUploadPresignedUrl = async (req, res) => {
+const getUploadPresignedUrl = async (req, res) => {
   const identity = parseJwtInHeader(req)
   console.log("req", JSON.stringify(identity))
   const tenantId = identity.iss
@@ -33,7 +38,7 @@ export const getUploadPresignedUrl = async (req, res) => {
   })
 }
 
-export const saveVideo = async (req, res) => {
+const saveVideo = async (req, res) => {
   const identity = parseJwtInHeader(req)
   console.log("req", JSON.stringify(identity))
   const tenantId = identity.iss
@@ -72,3 +77,23 @@ export const saveVideo = async (req, res) => {
     res.status(500)
   }
 }
+
+const getSpaceVideos = async (req, res) => {
+  const { iss: tenantId, context } = parseJwtInHeader(req)
+  const spaceId = req.query.spaceId
+    ? req.query.spaceId
+    : context.confluence.space.id
+  res.json(await getTenantVideosBySpace(tenantId, spaceId))
+}
+
+const getVideoThumbnails = (req, res) => {
+  const { iss: tenantId } = parseJwtInHeader(req)
+  const videoId = req.query.videoId
+  console.log("video id ----->", videoId)
+  const contents = getThumbnails(tenantId, videoId, (objectsContents) => {
+    console.log("contents ----->", objectsContents)
+    res.json(objectsContents)
+  })
+}
+
+export { getUploadPresignedUrl, saveVideo, getSpaceVideos, getVideoThumbnails }

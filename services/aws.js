@@ -43,3 +43,25 @@ export const triggerMediaConvertJob = (contextPath, inputPath) => {
     .createJob(jobParams)
     .promise()
 }
+
+export const getThumbnails = (tenantId, videoId) => {
+  AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  })
+
+  const bucket = process.env.S3_BUCKET_NAME
+  const s3 = new AWS.S3({ signatureVersion: "v4", params: { Bucket: bucket } })
+  const prefix = `${OUTPUT_PREFIX}/${tenantId}/${videoId}/thumbnails/`
+
+  const params = {
+    Bucket: bucket,
+    Prefix: prefix,
+  }
+  s3.listObjectsV2(params, (err, data) => {
+    console.log("data------>", data)
+    console.log("Contents------>", data.Contents)
+    return data.Contents
+  })
+}

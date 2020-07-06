@@ -7,10 +7,10 @@ module.exports = {
   devtool: "source-map",
   entry: {
     Studio: "./src/js/components/studio/Studio.js",
-    GetStarted: "./src/js/components/admin/GetStarted.jsx",
-    Configuration: "./src/js/components/admin/Configuration.jsx",
-    VideoMacro: "./src/js/components/macro/VideoMacro.jsx",
-    VideoMacroEditor: "./src/js/components/macro/VideoMacroEditor.jsx",
+    GetStarted: "./src/js/components/admin/GetStarted.js",
+    Configuration: "./src/js/components/admin/Configuration.js",
+    VideoMacro: "./src/js/components/macro/VideoMacro.js",
+    VideoMacroEditor: "./src/js/components/macro/VideoMacroEditor.js",
   },
   output: {
     path: OUTPUT_DIR,
