@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from "react"
 import * as ReactDOM from "react-dom"
+import PlayerContainer from "./components/PlayerContainer"
 
 const VideoMacro = () => {
   const [title, setTitle] = useState("")
   const [assignedUsers, setAssignedUsers] = useState([])
-  const [video, setVideo] = useState("")
+  const [video, setVideo] = useState({})
 
   useEffect(() => {
     AP.confluence.getMacroData(function (data) {
       console.log("MACRO DATA _________>", data)
       setTitle(data.title)
       setAssignedUsers(data.users)
-      setVideo(data.video)
+      const video = {
+        title: "Video Title",
+        id: "d926d13b-7b26-4ff6-a07b-4574b909b5cc",
+      }
+      setVideo(video)
     })
   }, [])
 
   return (
     <div className="aui-item">
-      <p>Hi from video macro with:</p>
-      <ol id="somePara">
-        <li>title={title}</li>
-        <li>users={assignedUsers}</li>
-        <li>video={video}</li>
-      </ol>
+      <h5>{title}</h5>
+      <PlayerContainer video={video} />
     </div>
   )
 }

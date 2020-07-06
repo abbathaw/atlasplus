@@ -1,5 +1,9 @@
 import db from "../models"
 
+export const getVideo = (videoId) => {
+  return db.Video.findByPk(videoId)
+}
+
 export const saveNewVideo = async (
   tenantId,
   userId,

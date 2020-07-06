@@ -2,6 +2,7 @@ import * as macroController from "../controllers/macroController"
 import studioRouter from "./studioRouter"
 import { tenantValidator } from "../services/tenantChecker"
 import { processSns } from "../controllers/snsController"
+import * as playerController from "../controllers/playerController"
 const bodyParser = require("body-parser")
 
 export default function routes(app, addon) {
@@ -28,7 +29,15 @@ export default function routes(app, addon) {
 
   app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
 
+  app.post("/video-player-play", playerController.getPlayUrl)
+
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 
   app.post("/snsTopic", bodyParser.text(), processSns)
+
+  //testing purposes only
+  app.get("/test-player", function (req, res) {
+    res.render("player-test")
+  })
+  app.post("/video-player-play-test", playerController.getPlayUrlTest)
 }
