@@ -4,7 +4,7 @@ const Dotenv = require("dotenv-webpack")
 
 module.exports = {
   mode: "development",
-  devtool: "source-map",
+  // devtool: "source-map",
   entry: {
     Studio: "./src/js/components/studio/Studio.js",
     GetStarted: "./src/js/components/admin/GetStarted.js",

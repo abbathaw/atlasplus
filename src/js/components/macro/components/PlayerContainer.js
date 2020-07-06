@@ -9,7 +9,7 @@ const PlayerContainer = ({ video }) => {
   // const controllerRef = useRef(null);
 
   useEffect(() => {
-    if (video && video.id) {
+    if (video) {
       AP.context.getToken(async function (token) {
         try {
           const { data } = await getPlayUrl(video, token)
@@ -39,7 +39,7 @@ const PlayerContainer = ({ video }) => {
 
 function getPlayUrl(video, token) {
   const body = {
-    videoId: video.id,
+    videoId: JSON.parse(video).value,
   }
   const headers = { Authorization: `JWT ${token}` }
   return axios.post(`video-player-play`, body, {

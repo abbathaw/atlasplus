@@ -1,10 +1,10 @@
 import db from "../models"
 
-export const getVideo = (videoId) => {
+const getVideo = (videoId) => {
   return db.Video.findByPk(videoId)
 }
 
-export const saveNewVideo = async (
+const saveNewVideo = async (
   tenantId,
   userId,
   spaceId,
@@ -29,7 +29,18 @@ export const saveNewVideo = async (
   })
 }
 
-export const getFileExtension = (fileType) => {
+const getTenantVideosBySpace = async (tenantId, spaceId) => {
+  let videos = await db.Video.findAll({
+    where: {
+      tenantId,
+      spaceId,
+    },
+  })
+  console.log("The query: ", videos)
+  return videos
+}
+
+const getFileExtension = (fileType) => {
   if (fileType === "video/quicktime") {
     return ".mov"
   } else if (fileType === "video/mp4") {
@@ -38,3 +49,5 @@ export const getFileExtension = (fileType) => {
     return ""
   }
 }
+
+export { saveNewVideo, getFileExtension, getTenantVideosBySpace, getVideo }

@@ -99,10 +99,7 @@
             },
             "type": "enum",
             "required": true,
-            "multiple": false,
-            "defaultValue": "video1",
-            "values": ["video1", "video2", "video3", "video4"],
-            "hidden": false
+            "multiple": false
           }
         ],
         "editor": {
