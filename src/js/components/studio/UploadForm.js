@@ -157,7 +157,7 @@ const UploadForm = ({ resetForm }) => {
           )}
         </div>
         <div style={{ marginTop: "20px" }}>
-          <Label for={"videoTitle"}>Video Title</Label>
+          <Label htmlFor={"videoTitle"}>Video Title</Label>
           <TextInput
             type="text"
             id={"videoTitle"}

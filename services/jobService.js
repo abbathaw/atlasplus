@@ -47,6 +47,18 @@ export const getJob = (jobReference) => {
 }
 
 export const updateJob = async (jobId, status) => {
+  if (status === "COMPLETE") {
+    db.Job.findByPk(jobId).then((job) => {
+      db.Video.update({ status: "ready" }, { where: { id: job.videoId } }).then(
+        (rows) => {
+          console.log(
+            `Video id ${job.videoId} status updated to ready. Rows affected ${rows}.`
+          )
+        }
+      )
+    })
+  }
+
   return await db.Job.update({ status }, { where: { id: jobId } }).then(
     (rows) => {
       console.log(
