@@ -5,10 +5,12 @@ import Spinner from "@atlaskit/spinner"
 import Button from "@atlaskit/button"
 import styled from "styled-components"
 import Page, { Grid, GridColumn } from "@atlaskit/page"
+import { Thumbnail } from "./Thumbnail"
 
 const VideosList = () => {
   const [videos, setVideos] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [token, setToken] = useState("")
 
   useEffect(() => {
     //get Token to call backend
@@ -17,37 +19,13 @@ const VideosList = () => {
         headers: { Authorization: `JWT ${token}` },
       })
       console.log("videos-------------->", videos)
-      const videosWithThumbnails = Promise.all(
-        videos.map(async (video) => {
-          return {
-            ...video,
-            thumbnailUrl: await getVideoThumbnails(video.id),
-          }
-        })
-      )
 
-      console.log(
-        "videos with thumbnails-------------->",
-        await videosWithThumbnails
-      )
       setIsLoading(false)
-      setVideos(await videosWithThumbnails)
+      setToken(token)
+      setVideos(videos)
     })
   }, [])
 
-  const getVideoThumbnails = (videoId) => {
-    return new Promise((resolve) => {
-      AP.context.getToken(async (token) => {
-        const {
-          data: { thumbnailUrl },
-        } = await axios.get(`video-studio/videoThumbnails?videoId=${videoId}`, {
-          headers: { Authorization: `JWT ${token}` },
-        })
-        console.log("url-------------->", thumbnailUrl)
-        resolve(thumbnailUrl)
-      })
-    })
-  }
   const { setSelectedTab } = useTabSelectContext()
 
   return (
@@ -63,11 +41,7 @@ const VideosList = () => {
                   <VideoCard>
                     <Grid>
                       <GridColumn medium={3}>
-                        <Thumbnail
-                          src={video.thumbnailUrl}
-                          alt={"thumbnail"}
-                          style={{ width: "100%" }}
-                        />
+                        <Thumbnail videoId={video.id} token={token} />
                       </GridColumn>
                       <GridColumn medium={9}>
                         <CardContainer>
@@ -125,13 +99,6 @@ const VideoCard = styled.div`
 const CardContainer = styled.div`
   padding: 2px 8px;
   margin: 10px;
-`
-
-const Thumbnail = styled.img`
-  padding: 2px 8px;
-  border-radius: 5px 5px 0 0;
-  max-width: 300px;
-  margin: 10px 2px 0 2px;
 `
 
 export default VideosList
