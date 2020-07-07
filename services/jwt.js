@@ -1,4 +1,5 @@
 const atlJwt = require("atlassian-jwt")
+import db from "../models"
 
 const AUTH_HEADER = "authorization"
 const JWT_PARAM = "jwt"
@@ -18,4 +19,26 @@ export const parseJwtInHeader = (req) => {
       return null
     }
   }
+}
+
+export const isValidToken = async (token) => {
+  const decodedToken = await atlJwt.decode(token, null, true)
+  const tenantId = decodedToken.iss
+  console.log("got tenant from socket", tenantId)
+  return await db.addon.get("clientInfo", tenantId).then((tenantInAddon) => {
+    if (tenantInAddon) {
+      const sharedSecret = tenantInAddon.sharedSecret
+      try {
+        const verifiedClaims = atlJwt.decode(token, sharedSecret, false)
+        return true
+      } catch (error) {
+        console.log("Unable to decode JWT token: " + error)
+        return false
+      }
+    }
+  })
+}
+
+export const decodeToken = (token) => {
+  return atlJwt.decode(token, null, true)
 }

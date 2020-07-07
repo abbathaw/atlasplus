@@ -10,7 +10,11 @@ import {
   PLAY,
   SEEKED,
   SEEKING,
-} from "./EventService"
+} from "../../services/EventService"
+
+import socketIOClient from "socket.io-client"
+const ENDPOINT = "ws://atlasplus.ap.ngrok.io/analytics"
+
 const PlayerContainer = ({ video }) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
@@ -33,6 +37,32 @@ const PlayerContainer = ({ video }) => {
 
   useEffect(() => {
     if (!loading) {
+      const socket = socketIOClient(ENDPOINT, {
+        upgrade: false,
+        transports: ["websocket"],
+      })
+      socket.on("connect", () => {
+        socket.emit("storeClientInfo", { customId: "dadasdas" })
+        // either with send()
+        socket.send("Hello!")
+
+        // or with emit() and custom event names
+        socket.emit(
+          "salutations",
+          "Hello!",
+          { mr: "john" },
+          Uint8Array.from([1, 2, 3, 4])
+        )
+        // handle the event sent with socket.send()
+        socket.on("message", (data) => {
+          console.log(data)
+        })
+
+        // handle the event sent with socket.emit()
+        socket.on("greetings", (elem1, elem2, elem3) => {
+          console.log(elem1, elem2, elem3)
+        })
+      })
       const videoElement = controllerRef.current.getVideoElement()
       console.log("what is video element", videoElement)
       console.log("DURATIOn", videoElement.duration)
@@ -113,6 +143,7 @@ const PlayerContainer = ({ video }) => {
           )
         )
       }
+      socket.disconnect()
     }
   }, [loading])
 

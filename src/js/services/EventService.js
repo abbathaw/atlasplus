@@ -31,6 +31,8 @@ export const initEmitter = () => {
   return eventEmitter
 }
 
+//TODO remove duplicate events (paused/ended) or just use timeranges from paused
+
 const timeRangesToArray = (time_ranges) => {
   const ranges = []
   for (let i = 0; i < time_ranges.length; i++) {
