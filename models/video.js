@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "videoId",
       onDelete: "CASCADE",
     })
+    models.Video.hasMany(models.Enrollment, {
+      foreignKey: "videoId",
+      as: "enrollments",
+      onDelete: "CASCADE",
+    })
   }
 
   return Video

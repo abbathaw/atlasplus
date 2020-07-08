@@ -9,8 +9,6 @@ export const tenantValidator = function (req, res, next) {
   //If found just go next,
   // if not found fetch details from addonsettings table and save data
 
-  console.log("Tenant", db)
-
   db.Tenant.findByPk(tenantId)
     .then((existingTenant) => {
       if (existingTenant) {

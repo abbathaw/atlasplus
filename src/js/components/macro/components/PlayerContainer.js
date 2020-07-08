@@ -64,10 +64,15 @@ const PlayerContainer = ({ video }) => {
               console.log(`Session for ${videoId} connected`)
               socket.emit("storeClientInfo", {
                 videoId: videoId,
+                duration: videoElement.duration,
               })
             })
           },
           { once: true }
+        )
+
+        videoElement.addEventListener("timeupdate", () =>
+          socket.emit("timeupdate", { currentTime: videoElement.currentTime })
         )
 
         videoElement.addEventListener("pause", (event) =>

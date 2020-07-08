@@ -1,5 +1,14 @@
 import { decodeToken } from "../services/jwt"
-
+import {
+  createEnrollment,
+  getEnrollmentByUserId,
+} from "../services/enrollmentService"
+import {
+  createSession,
+  endSession,
+  updateSession,
+} from "../services/sessionService"
+const { v4: uuidv4 } = require("uuid")
 const { isValidToken } = require("../services/jwt")
 
 export default function (io) {
@@ -7,7 +16,7 @@ export default function (io) {
 
   analyticsIo.use(async function (socket, next) {
     const token = socket.handshake.query.token
-    console.log("soccketId", token)
+    console.log("socketId", token)
     if (await isValidToken(token)) {
       console.log("socket token is VALID")
       return next()
@@ -24,38 +33,71 @@ export default function (io) {
     socket.tenant = identity.iss
     socket.atlUserId = identity.sub ? identity.sub : ""
 
-    socket.on("storeClientInfo", (data) => {
+    socket.on("storeClientInfo", async (data) => {
       console.log("connected video id:", data.videoId)
       socket.videoId = data.videoId
+
+      const enrollments = await getEnrollmentByUserId(
+        data.videoId,
+        socket.atlUserId
+      )
+      console.log("getting enrollments", enrollments)
+      if (enrollments.length > 0) {
+        const enrollment = enrollments[0]
+        socket.enrollmentId = enrollment.id
+      } else {
+        const enrollmentId = uuidv4()
+        socket.enrollmentId = enrollmentId
+        const initialTimeRange = new Array(Math.round(data.duration) + 1).fill(
+          0
+        )
+        await createEnrollment(
+          enrollmentId,
+          data.videoId,
+          socket.atlUserId,
+          initialTimeRange
+        )
+        console.log("created enrollment from socket")
+      }
+
+      //create session
+      const sessionId = uuidv4()
+      await createSession(sessionId, socket.enrollmentId)
+      console.log("created session from socket")
+      socket.sessionId = sessionId
     })
-    // either with send()
-    socket.send("jjjkjkj!")
 
     console.log("now I know the user", socket.tenant, socket.atlUserId)
-
-    // or with emit() and custom event names
-    socket.emit("greetings", "Hey!", { ms: "jane" }, Buffer.from([4, 3, 3, 1]))
 
     // handle the event sent with socket.send()
     socket.on("message", (data) => {
       console.log(data)
     })
 
-    socket.on("paused", (data, currentTime) => {
+    socket.on("paused", async (data, currentTime) => {
       console.log("received pause event", data)
-      console.log("received pause event with CurrenTime", currentTime)
+      console.log("received pause event with CurrentTime", currentTime)
+      await updateSession(socket.sessionId, data)
     })
 
-    socket.on("ended", (data) => {
+    socket.on("timeupdate", (data) => {
+      socket.videoCurrentTime = data.currentTime
+    })
+
+    socket.on("ended", async (data, currentTime) => {
       console.log("received ended event", data)
+      await updateSession(socket.sessionId, data)
+      if (socket.sessionId) {
+        await endSession(socket.sessionId, Math.floor(socket.videoCurrentTime))
+      }
     })
 
     // handle the event sent with socket.emit()
-    socket.on("salutations", (elem1, elem2, elem3) => {
-      console.log(elem1, elem2, elem3)
-    })
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log("Client disconnected")
+      if (socket.sessionId) {
+        await endSession(socket.sessionId, Math.floor(socket.videoCurrentTime))
+      }
     })
   })
 }
