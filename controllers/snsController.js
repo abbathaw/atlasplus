@@ -12,7 +12,6 @@ export const processSns = async (req, res) => {
       const url = payload.SubscribeURL
       await request(url, handleSubscriptionResponse)
     } else if (req.header("x-amz-sns-message-type") === "Notification") {
-      console.log(payload)
       //process data here
       await processSnsPayload(payload)
       res.status(200).send("Ok")
@@ -29,11 +28,22 @@ const processSnsPayload = async (payload) => {
   const isVerified = verifySNSTopic(payload)
   if (isVerified) {
     const message = JSON.parse(payload.Message)
-    const { jobId: jobReference, status } = message.detail
+    const { jobId: jobReference, status, outputGroupDetails } = message.detail
+    console.log("SNS Message detail", message.detail)
+    const output = outputGroupDetails.filter(
+      (output) => output.type === "DASH_ISO_GROUP"
+    )
+    let outputTargetDuration = 0
+    try {
+      const duration = output[0].outputDetails[0].durationInMs
+      outputTargetDuration = Math.floor(duration)
+    } catch (e) {
+      console.error("Couldn't grab output duration from SNS", e)
+    }
+
     const job = await getJob(jobReference)
     if (job.length > 0 && job[0]) {
-      console.log("what is job", job)
-      await updateJob(job[0].id, status)
+      await updateJob(job[0].id, status, outputTargetDuration)
     }
   }
 }

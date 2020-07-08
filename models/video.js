@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     sourceFileType: DataTypes.STRING,
     spaceId: DataTypes.STRING,
+    durationInMs: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
     drm: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
