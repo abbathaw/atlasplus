@@ -1,45 +1,29 @@
 import { EventEmitter } from "events"
 
-export const FIRSTPLAY = "firstplay"
-export const CANPLAY = "canplay"
-export const PLAY = "play"
 export const PAUSE = "pause"
-export const SEEKING = "seeking"
 export const SEEKED = "seeked"
 export const ENDED = "ended"
 export const TIMEUPDATE = "timeupdate"
 
 export const initEmitter = (socket) => {
   const eventEmitter = new EventEmitter()
-  eventEmitter.on(CANPLAY, (data, currentTime) =>
-    console.log("canPlay", data, currentTime)
-  )
-  eventEmitter.on(PLAY, (data, currentTime) =>
-    console.log("playing", data, currentTime)
-  )
+
   eventEmitter.on(PAUSE, (data, currentTime, timeRange) => {
     const timeRanges = timeRangesToArray(timeRange)
-    console.log("pausing", data, currentTime, timeRanges)
-    console.log("what is socket", socket)
+
     socket.emit("paused", timeRanges, currentTime)
   })
 
-  eventEmitter.on(TIMEUPDATE, (data, currentTime, timeRange) => {
-    // const timeRanges = timeRangesToArray(timeRange)
-    console.log("timeupdate", timeRange)
-    const timeRanges = []
-    socket.emit("timeupdate", timeRanges, currentTime)
+  eventEmitter.on(TIMEUPDATE, (currentTime) => {
+    socket.emit("timeupdate", currentTime)
   })
 
-  eventEmitter.on(SEEKING, (data, currentTime) =>
-    console.log("seeking", data, currentTime)
-  )
-  eventEmitter.on(SEEKED, (data, currentTime) =>
-    console.log("seeked", data, currentTime)
-  )
+  eventEmitter.on(SEEKED, (data, currentTime, timeRange) => {
+    const timeRanges = timeRangesToArray(timeRange)
+    socket.emit("seeked", timeRanges, currentTime)
+  })
   eventEmitter.on(ENDED, (data, currentTime, timeRange) => {
     const timeRanges = timeRangesToArray(timeRange)
-    console.log("ended", data, currentTime, timeRanges)
     socket.emit("ended", timeRanges, currentTime)
     socket.disconnect()
   })

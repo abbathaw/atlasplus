@@ -16,7 +16,6 @@ export default function (io) {
 
   analyticsIo.use(async function (socket, next) {
     const token = socket.handshake.query.token
-    console.log("socketId", token)
     if (await isValidToken(token)) {
       // console.log("socket token is VALID")
       return next()
@@ -63,30 +62,50 @@ export default function (io) {
           const sessionId = uuidv4()
           await createSessionInt(sessionId, socket.enrollmentId)
           socket.sessionId = sessionId
+          socket.end = false
+          socket.timeRange = []
+          socket.initialTime = 0
         })
       }
     })
 
-    socket.on("paused", async (timeRange, currentTime) => {
-      await updateSession(socket.sessionId, timeRange)
+    socket.on("seeked", async (timeRange, currentTime) => {
+      socket.initialTime = Math.round(currentTime)
+      socket.timeRange = timeRange
+      socket.ended = false
     })
 
-    socket.on("timeupdate", (timeRange, currentTime) => {
+    socket.on("paused", async (timeRange, currentTime) => {
+      await updateSession(socket.sessionId, timeRange)
       socket.timeRange = timeRange
+      socket.ended = true
+    })
+
+    socket.on("timeupdate", (currentTime) => {
       socket.videoCurrentTime = currentTime
+      socket.ended = false
     })
 
     socket.on("ended", async (timeRange, currentTime) => {
-      socket.ended = true
       await updateSession(socket.sessionId, timeRange)
+      socket.timeRange = timeRange
+      socket.ended = true
     })
 
     // handle the event sent with socket.emit()
     socket.on("disconnect", async () => {
       console.log("Client disconnected")
-      console.log("WHAT IS the time range", socket.timeRange)
       if (socket.sessionId) {
-        await endSession(socket.sessionId, Math.floor(socket.videoCurrentTime))
+        const lastCurrentTime = socket.videoCurrentTime
+          ? Math.floor(socket.videoCurrentTime)
+          : 0
+        await endSession(
+          socket.sessionId,
+          lastCurrentTime,
+          socket.timeRange,
+          socket.ended,
+          socket.initialTime
+        )
       }
     })
   })

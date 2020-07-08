@@ -3,13 +3,10 @@ import axios from "axios"
 import ShakaPlayer from "./ShakaPlayer"
 import "shaka-player/dist/controls.css"
 import {
-  CANPLAY,
   ENDED,
   initEmitter,
   PAUSE,
-  PLAY,
   SEEKED,
-  SEEKING,
   TIMEUPDATE,
 } from "../../../services/EventService"
 
@@ -56,28 +53,28 @@ const PlayerContainer = ({ video }) => {
         videoElement.addEventListener(
           "play",
           async () => {
-            socket = io(`${ENDPOINT}`, {
-              query: { token: `${jwt}` },
-            })
-            eventEmitter = initEmitter(socket)
-            await socket.on("connect", () => {
-              setIsSocketConnection(true)
-              console.log(`Session for ${videoId} connected`)
-              socket.emit("storeClientInfo", {
-                videoId: videoId,
-                duration: videoElement.duration,
-              })
-            })
+            await playCallback()
           },
           { once: true }
         )
 
+        const playCallback = async () => {
+          socket = io(`${ENDPOINT}`, {
+            query: { token: `${jwt}` },
+          })
+          eventEmitter = initEmitter(socket)
+          await socket.on("connect", () => {
+            setIsSocketConnection(true)
+            console.log(`Session for ${videoId} connected`)
+            socket.emit("storeClientInfo", {
+              videoId: videoId,
+              duration: videoElement.duration,
+            })
+          })
+        }
+
         videoElement.addEventListener("timeupdate", () =>
-          eventEmitter.emit(
-            TIMEUPDATE,
-            videoElement.currentTime,
-            videoElement.played
-          )
+          eventEmitter.emit(TIMEUPDATE, videoElement.currentTime)
         )
 
         videoElement.addEventListener("pause", (event) =>
@@ -88,11 +85,14 @@ const PlayerContainer = ({ video }) => {
             videoElement.played
           )
         )
-        videoElement.addEventListener("seeking", (event) =>
-          eventEmitter.emit(SEEKING, event, videoElement.currentTime)
-        )
+
         videoElement.addEventListener("seeked", (event) =>
-          eventEmitter.emit(SEEKED, event, videoElement.currentTime)
+          eventEmitter.emit(
+            SEEKED,
+            event,
+            videoElement.currentTime,
+            videoElement.played
+          )
         )
         videoElement.addEventListener("ended", (event) =>
           eventEmitter.emit(
@@ -104,11 +104,12 @@ const PlayerContainer = ({ video }) => {
         )
 
         return () => {
-          videoElement.removeEventListener("loadedmetadata", (event) =>
-            console.log("duration", videoElement.duration)
+          videoElement.removeEventListener("loadedmetadata", () =>
+            setDuration(videoElement.duration)
           )
-          videoElement.removeEventListener("play", (event) =>
-            eventEmitter.emit(PLAY, event, videoElement.currentTime)
+          videoElement.removeEventListener(
+            "play",
+            async (event) => await playCallback()
           )
           videoElement.removeEventListener("pause", (event) =>
             eventEmitter.emit(
@@ -118,19 +119,18 @@ const PlayerContainer = ({ video }) => {
               videoElement.played
             )
           )
-          videoElement.removeEventListener("seeking", (event) =>
-            eventEmitter.emit(SEEKING, event, videoElement.currentTime)
-          )
-          videoElement.removeEventListener("seeked", (event) =>
-            eventEmitter.emit(SEEKED, event, videoElement.currentTime)
-          )
 
-          videoElement.removeEventListener("timeupdate", () =>
+          videoElement.removeEventListener("seeked", (event) =>
             eventEmitter.emit(
-              TIMEUPDATE,
+              SEEKED,
+              event,
               videoElement.currentTime,
               videoElement.played
             )
+          )
+
+          videoElement.removeEventListener("timeupdate", () =>
+            eventEmitter.emit(TIMEUPDATE, videoElement.currentTime)
           )
 
           videoElement.removeEventListener("ended", (event) => {

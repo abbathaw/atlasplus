@@ -34,7 +34,39 @@ export const updateSession = async (sessionId, timeRange) => {
     })
 }
 
-export const endSession = async (sessionId, lastCurrentTimeProps) => {
+export const endSession = async (
+  sessionId,
+  lastCurrentTimeProps,
+  socketTimeRange,
+  socketEnded,
+  socketInitialTime
+) => {
+  let useSocketTimeRange = []
+  if (!socketEnded) {
+    console.log("socket ended", socketEnded)
+    if (socketTimeRange && socketTimeRange.length > 0) {
+      if (socketInitialTime === 0) {
+        const lastIndex = socketTimeRange.length - 1
+        const lastElement = socketTimeRange[lastIndex]
+        if (lastElement < lastCurrentTimeProps) {
+          useSocketTimeRange = [...socketTimeRange]
+          useSocketTimeRange[lastIndex] = lastCurrentTimeProps
+          console.log("im here", useSocketTimeRange, lastIndex)
+        }
+      } else {
+        // the user has seeked forward as socket initial time is no longer 0
+        if (socketInitialTime < lastCurrentTimeProps) {
+          useSocketTimeRange = [...socketTimeRange]
+          useSocketTimeRange.push(socketInitialTime)
+          useSocketTimeRange.push(lastCurrentTimeProps)
+        }
+      }
+    } else {
+      useSocketTimeRange = [0, lastCurrentTimeProps]
+      console.log("im here2", useSocketTimeRange)
+    }
+  }
+
   db.Session.findByPk(sessionId).then((session) => {
     const sessionEndtime = new Date()
     const sessionStartTime = session.startTime ? session.startTime : new Date()
@@ -59,7 +91,11 @@ export const endSession = async (sessionId, lastCurrentTimeProps) => {
       .then(async (enrollment) => {
         const totalTimeSpent = sessionDuration + enrollment.timeSpent
 
-        const sessionTimeRange = session.timeRange ? session.timeRange : []
+        const sessionTimeRange = socketEnded
+          ? session.timeRange
+            ? session.timeRange
+            : []
+          : useSocketTimeRange
         const enrollmentTimeRange = enrollment.timeRange
           ? enrollment.timeRange
           : []

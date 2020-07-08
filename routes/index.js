@@ -34,10 +34,4 @@ export default function routes(app, addon) {
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 
   app.post("/snsTopic", bodyParser.text(), processSns)
-
-  //testing purposes only
-  app.get("/test-player", function (req, res) {
-    res.render("player-test")
-  })
-  app.post("/video-player-play-test", playerController.getPlayUrlTest)
 }
