@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@atlaskit/button": "^14.0.0",
+    "@atlaskit/drawer": "^6.0.0",
     "@atlaskit/field-text": "^11.0.0",
     "@atlaskit/flag": "^13.0.0",
     "@atlaskit/form": "^8.0.0",

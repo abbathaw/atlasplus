@@ -2,10 +2,10 @@
   "key": "atlasplus",
   "name": "Atlas Plus Video Studio",
   "description": "The ultimate video solution for all of your needs",
-  "baseUrl": "{{localBaseUrl}}",
+  "baseUrl": "https://d210a8d7cd21.ngrok.io/",
   "links": {
-    "self": "{{localBaseUrl}}/atlassian-connect.json",
-    "homepage": "{{localBaseUrl}}/atlassian-connect.json"
+    "self": "https://d210a8d7cd21.ngrok.io/atlassian-connect.json",
+    "homepage": "https://d210a8d7cd21.ngrok.io/atlassian-connect.json"
   },
   "authentication": {
     "type": "jwt"

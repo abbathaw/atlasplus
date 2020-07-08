@@ -6,11 +6,19 @@ import Button from "@atlaskit/button"
 import styled from "styled-components"
 import Page, { Grid, GridColumn } from "@atlaskit/page"
 import { Thumbnail } from "./Thumbnail"
+import { AnalyticsDrawer } from "./AnalyticsDrawer"
 
 const VideosList = () => {
   const [videos, setVideos] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [token, setToken] = useState("")
+  const [isAnalyticsDrawerOpen, setIsAnalyticsDrawerOpen] = useState(false)
+
+  const openDrawer = () => {
+    setIsAnalyticsDrawerOpen(true)
+    // AP.resize(1800, 1800)
+  }
+  const closeDrawer = () => setIsAnalyticsDrawerOpen(false)
 
   useEffect(() => {
     //get Token to call backend
@@ -38,12 +46,20 @@ const VideosList = () => {
             videos.map((video, index) => (
               <Grid key={index}>
                 <GridColumn medium={12}>
-                  <VideoCard>
+                  <VideoCard
+                    style={
+                      isAnalyticsDrawerOpen
+                        ? {
+                            "min-height": "90vh",
+                          }
+                        : {}
+                    }
+                  >
                     <Grid>
                       <GridColumn medium={3}>
                         <Thumbnail videoId={video.id} token={token} />
                       </GridColumn>
-                      <GridColumn medium={9}>
+                      <GridColumn medium={6}>
                         <CardContainer>
                           <h4>
                             <b>{video.name}</b>
@@ -59,6 +75,29 @@ const VideosList = () => {
                             <b>Upload date:</b>{" "}
                             {new Date(video.updatedAt).toDateString()}
                           </p>
+                        </CardContainer>
+                      </GridColumn>
+                      <GridColumn medium={3}>
+                        <CardContainer>
+                          <h4>
+                            <em>View count</em>
+                          </h4>
+                          <p>55 views</p>
+                          <p>
+                            <Button
+                              spacing={"none"}
+                              appearance={"link"}
+                              onClick={openDrawer}
+                            >
+                              Show more analytics
+                            </Button>
+                          </p>
+                          {isAnalyticsDrawerOpen && (
+                            <AnalyticsDrawer
+                              video={video}
+                              closeDrawer={closeDrawer}
+                            />
+                          )}
                         </CardContainer>
                       </GridColumn>
                     </Grid>
