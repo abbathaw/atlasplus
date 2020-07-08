@@ -1,12 +1,12 @@
 import fs from "fs"
 import path from "path"
 import { Sequelize } from "sequelize"
-const env = process.env.NODE_ENV || "development"
-const config = require("../config.json")[env]
+// const env = process.env.NODE_ENV || "development"
+const config = require("../db.js")
 const basename = path.basename(__filename)
 let db = {}
 
-const sequelize = new Sequelize(config.store)
+const sequelize = new Sequelize(config.dbConfig)
 
 fs.readdirSync(__dirname)
   .filter((file) => {

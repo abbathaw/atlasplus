@@ -10,11 +10,10 @@ import compression from "compression"
 import cookieParser from "cookie-parser"
 import errorHandler from "errorhandler"
 import morgan from "morgan"
-import db from "./models"
 const socketIo = require("socket.io")
 // atlassian-connect-express also provides a middleware
 import ace from "atlassian-connect-express"
-
+require("dotenv").config()
 // Use Handlebars as view engine:
 // https://npmjs.org/package/express-hbs
 // http://handlebarsjs.com
@@ -30,7 +29,9 @@ import favicon from "serve-favicon"
 
 // Routes live here; this is the C in MVC
 import routes from "./routes"
-require("dotenv").config()
+
+import db from "./models"
+
 // Bootstrap Express and atlassian-connect-express
 const app = express()
 const addon = ace(app)
