@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useTabSelectContext } from "./Studio"
+import { useTabSelectContext, useVideoAnalyticsModalContext } from "./Studio"
 import axios from "axios"
 import Spinner from "@atlaskit/spinner"
 import Button from "@atlaskit/button"
@@ -7,18 +7,12 @@ import styled from "styled-components"
 import Page, { Grid, GridColumn } from "@atlaskit/page"
 import { Thumbnail } from "./Thumbnail"
 import { AnalyticsModal } from "./AnalyticsModal"
+import { VideoAnalytics } from "./VideoAnalytics"
 
 const VideosList = () => {
   const [videos, setVideos] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [token, setToken] = useState("")
-  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
-
-  const openDrawer = () => {
-    setIsAnalyticsModalOpen(true)
-    // AP.resize(1800, 1800)
-  }
-  const closeModal = () => setIsAnalyticsModalOpen(false)
 
   useEffect(() => {
     //get Token to call backend
@@ -46,15 +40,7 @@ const VideosList = () => {
             videos.map((video, index) => (
               <Grid key={index}>
                 <GridColumn medium={12}>
-                  <VideoCard
-                  // style={
-                  //   isAnalyticsModalOpen
-                  //     ? {
-                  //         "min-height": "90vh",
-                  //       }
-                  //     : {}
-                  // }
-                  >
+                  <VideoCard>
                     <Grid>
                       <GridColumn medium={3}>
                         <Thumbnail videoId={video.id} token={token} />
@@ -79,25 +65,7 @@ const VideosList = () => {
                       </GridColumn>
                       <GridColumn medium={3}>
                         <CardContainer>
-                          <h4>
-                            <em>View count</em>
-                          </h4>
-                          <p>55 views</p>
-                          <p>
-                            <Button
-                              spacing={"none"}
-                              appearance={"link"}
-                              onClick={openDrawer}
-                            >
-                              Show more analytics
-                            </Button>
-                          </p>
-                          {isAnalyticsModalOpen && (
-                            <AnalyticsModal
-                              video={video}
-                              closeModal={closeModal}
-                            />
-                          )}
+                          <VideoAnalytics video={video} token={token} />
                         </CardContainer>
                       </GridColumn>
                     </Grid>

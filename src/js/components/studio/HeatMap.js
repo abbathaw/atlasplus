@@ -1,63 +1,28 @@
 import React from "react"
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts"
 
-// for a 10 second video from 4 users (enrollments)
-const dbQueryRes = [
-  [6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
-  [6, 6, 6, 6, 6, 0, 0, 0, 0, 0],
-  [6, 6, 6, 6, 6, 0, 0, 0, 0, 0],
-  [6, 6, 6, 6, 6, 0, 0, 0, 0, 0],
-  [6, 6, 6, 6, 3, 6, 6, 6, 6, 6],
-]
-
-// To be used when session closes to consolidate watch times for user enrollment
-const stackCompoundedTimeRange = (currentCompoundedTimeRange, newTimeRange) => {
-  let spreadNewTimeRange = spreadTimeRangeArray(newTimeRange)
-  for (let i = 0; i < spreadNewTimeRange.length; i++) {
-    currentCompoundedTimeRange[spreadNewTimeRange[i]]++
-  }
-  return currentCompoundedTimeRange
-}
-
-const stackUniqueVideoCompoundedTimeRageFromAllUsers = (
+const stackUniqueVideoCompoundedTimeRangeFromAllUsers = (
   arrayOfUsersTimeRanges
 ) => {
   // response from db query
   let videoDuration = arrayOfUsersTimeRanges[0].length
-  let uniqueVideoCompoundedTimeRageFromAllUsers = new Array(videoDuration).fill(
-    0
-  )
+  let uniqueVideoCompoundedTimeRangeFromAllUsers = new Array(
+    videoDuration
+  ).fill(0)
 
   for (let i = 0; i < arrayOfUsersTimeRanges.length; i++) {
     for (let j = 0; j < videoDuration; j++) {
       if (arrayOfUsersTimeRanges[i][j]) {
-        uniqueVideoCompoundedTimeRageFromAllUsers[j]++
+        uniqueVideoCompoundedTimeRangeFromAllUsers[j]++
       }
     }
   }
-  return uniqueVideoCompoundedTimeRageFromAllUsers
+  return uniqueVideoCompoundedTimeRangeFromAllUsers
 }
 
-const spreadTimeRangeArray = (timeRangeArray) => {
-  let collected = []
-  for (let i = 0; i < timeRangeArray.length; i = i + 2) {
-    console.log("range from ", timeRangeArray[i], " to ", timeRangeArray[i + 1])
-    let spreadTimeRangeArray = Array(
-      timeRangeArray[i + 1] - timeRangeArray[i] + 1
-    )
-      .fill()
-      .map((_, idx) => timeRangeArray[i] + idx)
-    console.log(spreadTimeRangeArray)
-    collected = collected.concat(spreadTimeRangeArray)
-  }
-  console.log("collected ", collected)
-  return collected
-}
-
-const createGraphData = (uniqueVideoCompoundedTimeRageFromAllUsers) => {
-  // param can also be from one user
-
-  let processedResult = uniqueVideoCompoundedTimeRageFromAllUsers.map(
+// param can also be from one user
+const createGraphData = (uniqueVideoCompoundedTimeRangeFromAllUsers) => {
+  let processedResult = uniqueVideoCompoundedTimeRangeFromAllUsers.map(
     (count, timestamp) => {
       return {
         second: timestamp,
@@ -65,21 +30,26 @@ const createGraphData = (uniqueVideoCompoundedTimeRageFromAllUsers) => {
       }
     }
   )
-  console.log("results ", processedResult)
+  console.log("processed videoViewData ", processedResult)
 
   return processedResult
 }
-const data = createGraphData(
-  stackUniqueVideoCompoundedTimeRageFromAllUsers(dbQueryRes)
-)
 
-const HeatMap = () => {
+const HeatMap = ({ videoViewData }) => {
+  const timeRangeOfAllEnrollments = videoViewData.map(
+    (enrollment) => enrollment.timeRange
+  )
+  const stackedTimeRangeOfAllEnrollments = stackUniqueVideoCompoundedTimeRangeFromAllUsers(
+    timeRangeOfAllEnrollments
+  )
+  let processedData = createGraphData(stackedTimeRangeOfAllEnrollments)
+  processedData.pop()
+
   return (
-    <LineChart width={600} height={300} data={data}>
+    <LineChart width={1000} height={500} data={processedData}>
       <Line type="monotone" dataKey="count" stroke="#8884d8" />
-      {/*<CartesianGrid stroke="#ccc"/>*/}
       <XAxis dataKey="second" />
-      <YAxis />
+      <YAxis allowDecimals={false} />
     </LineChart>
   )
 }
