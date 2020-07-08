@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import HeatMap from "./HeatMap"
 import Modal, { ModalTransition } from "@atlaskit/modal-dialog"
 import { NoVideoDataWarning } from "./NoVideoDataWarning"

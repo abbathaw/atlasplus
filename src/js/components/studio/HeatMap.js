@@ -1,5 +1,7 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts"
+import Page, { Grid, GridColumn } from "@atlaskit/page"
+import { RadioGroup } from "@atlaskit/radio"
 
 // param can also be from one user
 const createGraphData = (uniqueVideoCompoundedTimeRangeFromAllUsers) => {
@@ -35,22 +37,66 @@ const addColumns = (arrays, unique = true) => {
 }
 
 const HeatMap = ({ videoViewData }) => {
+  const [isUniqueAggregation, setIsUniqueAggregation] = useState(true)
+  const [uniqueAggregationData, setUniqueAggregationData] = useState([])
+  const [cumulativeAggregationData, setCumulativeAggregationData] = useState([])
+
+  useEffect(() => {
+    if (uniqueAggregationData.length === 0) {
+      let processedData = createGraphData(addColumns(timeRangeOfAllEnrollments))
+      processedData.pop()
+      setUniqueAggregationData(processedData)
+    } else if (cumulativeAggregationData.length === 0) {
+      let processedData = createGraphData(
+        addColumns(timeRangeOfAllEnrollments, false)
+      )
+      processedData.pop()
+      setCumulativeAggregationData(processedData)
+    }
+  }, [isUniqueAggregation])
+
   const timeRangeOfAllEnrollments = videoViewData.map(
     (enrollment) => enrollment.timeRange
   )
-  const stackedTimeRangeOfAllEnrollments = addColumns(
-    timeRangeOfAllEnrollments,
-    false
-  )
-  let processedData = createGraphData(stackedTimeRangeOfAllEnrollments)
-  processedData.pop()
+
+  const aggregationMethods = [
+    { name: "unique", value: "unique", label: "Unique plays only" },
+    { name: "cumulative", value: "cumulative", label: "Cumulative plays" },
+  ]
+
+  const radioHandler = (event) => {
+    setIsUniqueAggregation(event.currentTarget.value === "unique")
+  }
 
   return (
-    <LineChart width={1000} height={500} data={processedData}>
-      <Line type="monotone" dataKey="count" stroke="#8884d8" />
-      <XAxis dataKey="second" />
-      <YAxis allowDecimals={false} />
-    </LineChart>
+    <Page>
+      <Grid>
+        <GridColumn medium={12}>
+          <h4>Choose aggregation method:</h4>
+          <RadioGroup
+            label={"Choose aggregation method"}
+            options={aggregationMethods}
+            defaultValue={aggregationMethods[0].value}
+            onChange={radioHandler}
+          />
+        </GridColumn>
+        <GridColumn medium={12}>
+          <LineChart
+            width={1000}
+            height={500}
+            data={
+              isUniqueAggregation
+                ? uniqueAggregationData
+                : cumulativeAggregationData
+            }
+          >
+            <Line type="monotone" dataKey="count" stroke="#8884d8" />
+            <XAxis dataKey="second" />
+            <YAxis allowDecimals={false} />
+          </LineChart>
+        </GridColumn>
+      </Grid>
+    </Page>
   )
 }
 
