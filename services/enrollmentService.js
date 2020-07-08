@@ -19,7 +19,7 @@ export const getEnrollmentByUserId = async (videoId, userId) => {
   })
 }
 
-export const getEnrollmentByVideo = (videoId) => {
+export const getEnrollmentsByVideoId = (videoId) => {
   return db.Enrollment.findAll({
     where: {
       videoId: videoId,

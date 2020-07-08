@@ -5,6 +5,7 @@ import {
   getUploadPresignedUrl,
   getSpaceVideos,
   getVideoThumbnails,
+  getVideoViewData,
 } from "../controllers/studioController"
 const studioRouter = express.Router()
 
@@ -30,5 +31,7 @@ studioRouter.post("/saveVideo", saveVideo)
 studioRouter.get("/spaceVideos", getSpaceVideos)
 
 studioRouter.get("/videoThumbnails", getVideoThumbnails)
+
+studioRouter.get("/videoAnalytics", getVideoViewData)
 
 export default studioRouter

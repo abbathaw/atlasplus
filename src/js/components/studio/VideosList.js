@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react"
-import { useTabSelectContext } from "./Studio"
+import { useTabSelectContext, useVideoAnalyticsModalContext } from "./Studio"
 import axios from "axios"
 import Spinner from "@atlaskit/spinner"
 import Button from "@atlaskit/button"
 import styled from "styled-components"
 import Page, { Grid, GridColumn } from "@atlaskit/page"
 import { Thumbnail } from "./Thumbnail"
+import { AnalyticsModal } from "./AnalyticsModal"
+import { VideoAnalytics } from "./VideoAnalytics"
 
 const VideosList = () => {
   const [videos, setVideos] = useState([])
@@ -43,7 +45,7 @@ const VideosList = () => {
                       <GridColumn medium={3}>
                         <Thumbnail videoId={video.id} token={token} />
                       </GridColumn>
-                      <GridColumn medium={9}>
+                      <GridColumn medium={6}>
                         <CardContainer>
                           <h4>
                             <b>{video.name}</b>
@@ -59,6 +61,11 @@ const VideosList = () => {
                             <b>Upload date:</b>{" "}
                             {new Date(video.updatedAt).toDateString()}
                           </p>
+                        </CardContainer>
+                      </GridColumn>
+                      <GridColumn medium={3}>
+                        <CardContainer>
+                          <VideoAnalytics video={video} token={token} />
                         </CardContainer>
                       </GridColumn>
                     </Grid>

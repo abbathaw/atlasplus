@@ -6,6 +6,7 @@ import {
   saveNewVideo,
 } from "../services/videoService"
 import { triggerEncoderJob } from "../services/jobService"
+import { getEnrollmentsByVideoId } from "../services/enrollmentService"
 
 const { v4: uuidv4 } = require("uuid")
 
@@ -96,4 +97,18 @@ const getVideoThumbnails = (req, res) => {
   })
 }
 
-export { getUploadPresignedUrl, saveVideo, getSpaceVideos, getVideoThumbnails }
+const getVideoViewData = async (req, res) => {
+  const videoId = req.query.videoId
+  console.log("video id ----->", videoId)
+  const enrollments = await getEnrollmentsByVideoId(videoId)
+  console.log("enrollments")
+  res.json({ enrollments })
+}
+
+export {
+  getUploadPresignedUrl,
+  saveVideo,
+  getSpaceVideos,
+  getVideoThumbnails,
+  getVideoViewData,
+}

@@ -6,7 +6,7 @@
       "adapter": "sequelize",
       "dialect": "postgres",
       "url": "$POSTGRES_URL",
-      "username": "$DBUSERNAME",
+       "username": "$DBUSERNAME",
       "password": "$DBPASSWORD",
       "database": "$DBNAME",
       "logging": false
