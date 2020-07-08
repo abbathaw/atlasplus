@@ -8,8 +8,9 @@ export const createSession = async (id, enrollmentId) => {
     enrollmentId,
     startTime,
   })
-    .then(() => {
+    .then((session) => {
       console.log("New Session created & saved to db")
+      return session
     })
     .catch((e) => {
       console.error("Error saving Session created to db", e)
@@ -53,18 +54,15 @@ export const endSession = async (sessionId, lastCurrentTime) => {
     //getEnrollment and update it
     db.Enrollment.findByPk(session.enrollmentId)
       .then(async (enrollment) => {
-        console.log("sessionEndTime", sessionEndtime)
-        console.log("sessionstartTime", session.startTime)
-        console.log("sessionDuration", enrollment.timeSpent)
-
-        console.log("lastCurrentTime", lastCurrentTime)
-
         const totalTimeSpent = sessionDuration + enrollment.timeSpent
 
         const sessionTimeRange = session.timeRange ? session.timeRange : []
+        const enrollmentTimeRange = enrollment.timeRange
+          ? enrollment.timeRange
+          : []
         const updatedTimeRange = loopOnSession(
           sessionTimeRange,
-          enrollment.timeRange
+          enrollmentTimeRange
         )
 
         const watched = calculateWatched(updatedTimeRange)
@@ -94,7 +92,9 @@ const loopOnSession = (sessionArray, originalArray) => {
     if (i % 2 === 0) {
       let initial = sessionArray[i]
       let second = sessionArray[i + 1]
-      arrayClone = target(initial, second, arrayClone)
+      if (initial && second) {
+        arrayClone = target(initial, second, arrayClone)
+      }
     }
   }
   return arrayClone

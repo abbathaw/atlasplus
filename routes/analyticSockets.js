@@ -18,7 +18,7 @@ export default function (io) {
     const token = socket.handshake.query.token
     console.log("socketId", token)
     if (await isValidToken(token)) {
-      console.log("socket token is VALID")
+      // console.log("socket token is VALID")
       return next()
     } else {
       console.log("socket token is not valid")
@@ -27,27 +27,29 @@ export default function (io) {
   })
 
   analyticsIo.on("connection", (socket) => {
-    console.log("socketId", socket.id)
+    // console.log("socketId", socket.id)
     const token = socket.handshake.query.token
     const identity = decodeToken(token)
     socket.tenant = identity.iss
     socket.atlUserId = identity.sub ? identity.sub : ""
 
     socket.on("storeClientInfo", async (data) => {
-      console.log("connected video id:", data.videoId)
       socket.videoId = data.videoId
 
       const enrollments = await getEnrollmentByUserId(
         data.videoId,
         socket.atlUserId
       )
-      console.log("getting enrollments", enrollments)
+
       if (enrollments.length > 0) {
         const enrollment = enrollments[0]
         socket.enrollmentId = enrollment.id
+        const sessionId = uuidv4()
+        await createSessionInt(sessionId, socket.enrollmentId)
+        socket.sessionId = sessionId
       } else {
         const enrollmentId = uuidv4()
-        socket.enrollmentId = enrollmentId
+
         const initialTimeRange = new Array(Math.round(data.duration) + 1).fill(
           0
         )
@@ -56,27 +58,16 @@ export default function (io) {
           data.videoId,
           socket.atlUserId,
           initialTimeRange
-        )
-        console.log("created enrollment from socket")
+        ).then(async (res) => {
+          socket.enrollmentId = enrollmentId
+          const sessionId = uuidv4()
+          await createSessionInt(sessionId, socket.enrollmentId)
+          socket.sessionId = sessionId
+        })
       }
-
-      //create session
-      const sessionId = uuidv4()
-      await createSession(sessionId, socket.enrollmentId)
-      console.log("created session from socket")
-      socket.sessionId = sessionId
-    })
-
-    console.log("now I know the user", socket.tenant, socket.atlUserId)
-
-    // handle the event sent with socket.send()
-    socket.on("message", (data) => {
-      console.log(data)
     })
 
     socket.on("paused", async (data, currentTime) => {
-      console.log("received pause event", data)
-      console.log("received pause event with CurrentTime", currentTime)
       await updateSession(socket.sessionId, data)
     })
 
@@ -85,11 +76,8 @@ export default function (io) {
     })
 
     socket.on("ended", async (data, currentTime) => {
-      console.log("received ended event", data)
+      socket.ended = true
       await updateSession(socket.sessionId, data)
-      if (socket.sessionId) {
-        await endSession(socket.sessionId, Math.floor(socket.videoCurrentTime))
-      }
     })
 
     // handle the event sent with socket.emit()
@@ -99,5 +87,11 @@ export default function (io) {
         await endSession(socket.sessionId, Math.floor(socket.videoCurrentTime))
       }
     })
+  })
+}
+
+const createSessionInt = async (sessionId, enrollmentId) => {
+  return await createSession(sessionId, enrollmentId).then((res) => {
+    console.log("created session from socket")
   })
 }

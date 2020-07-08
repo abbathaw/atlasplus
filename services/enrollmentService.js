@@ -54,8 +54,8 @@ export const updateEnrollment = (
     })
 }
 
-export const createEnrollment = (id, videoId, userId, timeRange) => {
-  db.Enrollment.create({
+export const createEnrollment = async (id, videoId, userId, timeRange) => {
+  return await db.Enrollment.create({
     id,
     timeRange,
     videoId,

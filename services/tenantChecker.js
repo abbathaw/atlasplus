@@ -12,7 +12,6 @@ export const tenantValidator = function (req, res, next) {
   db.Tenant.findByPk(tenantId)
     .then((existingTenant) => {
       if (existingTenant) {
-        console.log("Found Tenant", existingTenant)
         next()
       } else {
         db.addon.get("clientInfo", tenantId).then((tenantInAddon) => {
