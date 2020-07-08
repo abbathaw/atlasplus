@@ -5,10 +5,8 @@
     "store": {
       "adapter": "sequelize",
       "dialect": "postgres",
-      "url": "$POSTGRES_URL",
-      "username": "$DBUSERNAME",
-      "password": "$DBPASSWORD",
-      "database": "$DBNAME",
+      "url": "postgres://localhost:5432/atlas",
+      "database": "atlas",
       "logging": false
     }
   },
