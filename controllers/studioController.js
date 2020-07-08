@@ -51,6 +51,7 @@ const saveVideo = async (req, res) => {
   const videoId = req.body.videoId
   const title = req.body.title
   const fileType = req.body.fileType
+  const isDRM = req.body.isDRM
   const { fileSize } = req.body
   const size = fileSize && !isNaN(fileSize) ? fileSize / 1000000 : 0
 
@@ -64,13 +65,15 @@ const saveVideo = async (req, res) => {
       videoId,
       title,
       size,
-      fileType
+      fileType,
+      isDRM
     )
     await triggerEncoderJob(
       tenantId,
       videoId,
       fileId,
-      getFileExtension(fileType)
+      getFileExtension(fileType),
+      isDRM
     )
     res.status(201).send("created new video")
   } catch (e) {

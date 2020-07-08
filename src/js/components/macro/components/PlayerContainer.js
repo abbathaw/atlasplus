@@ -17,9 +17,11 @@ const PlayerContainer = ({ video }) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = React.useState(true)
+  const [tokenLoaded, setTokenLoaded] = React.useState(false)
   const [duration, setDuration] = React.useState(0)
   const [videoId, setVideoId] = React.useState("")
   const [isSocketConnection, setIsSocketConnection] = React.useState(false)
+  const [videoToken, setVideoToken] = useState("")
   const controllerRef = useRef()
 
   useEffect(() => {
@@ -31,6 +33,9 @@ const PlayerContainer = ({ video }) => {
           const { data } = await getPlayUrl(videoIdProps, token)
           setPlayUrl(data.url)
           setLoading(false)
+          const tokenData = await getDrmToken(videoIdProps, token)
+          setVideoToken(tokenData.token)
+          setTokenLoaded(true)
         } catch (e) {
           console.error("Some error happened getting the play url", e)
           setError("An error happened")
@@ -40,7 +45,8 @@ const PlayerContainer = ({ video }) => {
   }, [video])
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && tokenLoaded) {
+      console.log("Im here", tokenLoaded, videoToken)
       AP.context.getToken(async (jwt) => {
         const videoElement = controllerRef.current.getVideoElement()
 
@@ -155,13 +161,28 @@ const PlayerContainer = ({ video }) => {
       ) : (
         <div style={{ height: "700px", width: "100%" }}>
           {" "}
-          {!loading && (
-            <ShakaPlayer autoplay={false} src={playUrl} ref={controllerRef} />
+          {!loading && tokenLoaded && (
+            <ShakaPlayer
+              autoplay={false}
+              src={playUrl}
+              ref={controllerRef}
+              drmToken={videoToken}
+            />
           )}
         </div>
       )}
     </div>
   )
+}
+
+function getDrmToken(videoId, token) {
+  const body = {
+    videoId: videoId,
+  }
+  const headers = { Authorization: `JWT ${token}` }
+  return axios.post(`playToken`, body, {
+    headers,
+  })
 }
 
 function getPlayUrl(videoId, token) {

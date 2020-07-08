@@ -6,12 +6,13 @@ export const triggerEncoderJob = async (
   tenantId,
   videoId,
   fileId,
-  fileExtension
+  fileExtension,
+  isDRM
 ) => {
   const contextPath = `${tenantId}/${videoId}`
   const sourceFilePath = `${fileId}${fileExtension}`
 
-  triggerMediaConvertJob(contextPath, sourceFilePath).then(
+  triggerMediaConvertJob(contextPath, sourceFilePath, isDRM, videoId).then(
     async function (data) {
       const jobReference = data.Job.Id
       const initialStatus = data.Job.Status

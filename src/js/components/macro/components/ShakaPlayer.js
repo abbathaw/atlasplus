@@ -1,5 +1,6 @@
 import React from "react"
 import shaka from "shaka-player/dist/shaka-player.ui"
+import shaka2 from "shaka-player/dist/shaka-player.compiled"
 // import "shaka-player/dist/controls.css"
 
 /**
@@ -14,7 +15,7 @@ import shaka from "shaka-player/dist/shaka-player.ui"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay }, ref) => {
+const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -22,6 +23,12 @@ const ShakaPlayer = ({ src, autoPlay }, ref) => {
   const config = {
     manifest: {
       dash: {},
+    },
+    drm: {
+      servers: {
+        "com.widevine.alpha":
+          "https://license.pallycon.com/ri/licenseManager.do",
+      },
     },
   }
 
@@ -48,7 +55,19 @@ const ShakaPlayer = ({ src, autoPlay }, ref) => {
   React.useEffect(() => {
     const { player } = controller.current
     if (player) {
+      player
+        .getNetworkingEngine()
+        .registerRequestFilter(function (type, request) {
+          // Only add headers to license requests:
+          console.log("AMM III HERER", type)
+          if (type == shaka2.net.NetworkingEngine.RequestType.LICENSE) {
+            // This is the specific header name and value the server wants:
+            console.log("AMM III HERER")
+            request.headers["pallycon-customdata-v2"] = drmToken
+          }
+        })
       player.configure(config)
+      console.log("okkkk", player.getNetworkingEngine())
     }
   }, [config])
 

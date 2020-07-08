@@ -1,4 +1,5 @@
 import { getJobTemplate } from "./mediaconvert/jobTemplate"
+import { getJobTemplateWithDRM } from "./mediaconvert/jobTemplateDrm"
 
 const AWS = require("aws-sdk")
 export const UPLOAD_PREFIX = "source"
@@ -23,7 +24,12 @@ export const getUploadUrl = async (accountId, videoId, file) => {
   return await s3.getSignedUrlPromise("putObject", params)
 }
 
-export const triggerMediaConvertJob = (contextPath, inputPath) => {
+export const triggerMediaConvertJob = (
+  contextPath,
+  inputPath,
+  isDRM,
+  videoId
+) => {
   AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -36,7 +42,9 @@ export const triggerMediaConvertJob = (contextPath, inputPath) => {
   const fullSourcePath = `s3://${bucket}/${UPLOAD_PREFIX}/${contextPath}/${inputPath}`
   const outPutPath = `s3://${bucket}/${OUTPUT_PREFIX}/${contextPath}/`
 
-  const jobParams = getJobTemplate(fullSourcePath, outPutPath)
+  const jobParams = isDRM
+    ? getJobTemplate(fullSourcePath, outPutPath)
+    : getJobTemplateWithDRM(fullSourcePath, outPutPath, videoId)
 
   // Create a promise on a MediaConvert object
   return new AWS.MediaConvert({ apiVersion: "2017-08-29" })

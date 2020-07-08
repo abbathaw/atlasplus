@@ -3,6 +3,7 @@ import studioRouter from "./studioRouter"
 import { tenantValidator } from "../services/tenantChecker"
 import { processSns } from "../controllers/snsController"
 import * as playerController from "../controllers/playerController"
+import * as drmController from "../controllers/drmController"
 const bodyParser = require("body-parser")
 
 export default function routes(app, addon) {
@@ -34,4 +35,6 @@ export default function routes(app, addon) {
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 
   app.post("/snsTopic", bodyParser.text(), processSns)
+
+  app.post("/playToken", drmController.getDRMToken)
 }
