@@ -5,10 +5,10 @@
     "store": {
       "adapter": "sequelize",
       "dialect": "postgres",
-      "url": "postgres://postgres:postgres@db:5432/postgres",
-      "username": "postgres",
-      "password": "postgres",
-      "database": "postgres",
+      "url": "$POSTGRES_URL",
+      "username": "$DBUSERNAME",
+      "password": "$DBPASSWORD",
+      "database": "$DBNAME",
       "logging": false
     }
   },
@@ -19,10 +19,10 @@
     "store": {
       "adapter": "sequelize",
       "dialect": "postgres",
-      "url": "postgres://postgres:postgres@db:5432/postgres",
-      "username": "postgres",
-      "password": "postgres",
-      "database": "postgres"
+      "url": "$POSTGRES_URL",
+      "username": "$DBUSERNAME",
+      "password": "$DBPASSWORD",
+      "database": "$DBNAME"
     },
     "whitelist": [
       "*.jira-dev.com",

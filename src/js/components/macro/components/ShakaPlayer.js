@@ -14,7 +14,7 @@ import shaka from "shaka-player/dist/shaka-player.ui"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay }) => {
+const ShakaPlayer = ({ src, autoPlay }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -38,7 +38,6 @@ const ShakaPlayer = ({ src, autoPlay }) => {
 
     // Store Shaka's API in order to expose it as a handle.
     controller.current = { player, ui, videoElement: videoRef.current }
-
     return () => {
       player.destroy()
       ui.destroy()
@@ -63,17 +62,19 @@ const ShakaPlayer = ({ src, autoPlay }) => {
   }, [src])
 
   // Define a handle for easily referencing Shaka's player & ui API's.
-  // React.useImperativeHandle(ref, () => ({
-  //   get player() {
-  //     return controller.current.player;
-  //   },
-  //   get ui() {
-  //     return controller.current.ui;
-  //   },
-  //   get videoElement() {
-  //     return controller.current.videoElement;
-  //   },
-  // }));
+  React.useImperativeHandle(ref, () => ({
+    getVideoElement: () => controller.current.videoElement,
+    player: () => controller.current.player,
+    // get player() {
+    //   return controller.current.player;
+    // },
+    // get ui() {
+    //   return controller.current.ui;
+    // },
+    // get videoElement() {
+    //   return controller.current.videoElement;
+    // },
+  }))
 
   return (
     <div ref={uiContainerRef}>
@@ -88,4 +89,4 @@ const ShakaPlayer = ({ src, autoPlay }) => {
   )
 }
 
-export default ShakaPlayer
+export default React.forwardRef(ShakaPlayer)

@@ -10,11 +10,10 @@ import compression from "compression"
 import cookieParser from "cookie-parser"
 import errorHandler from "errorhandler"
 import morgan from "morgan"
-import db from "./models"
-
+const socketIo = require("socket.io")
 // atlassian-connect-express also provides a middleware
 import ace from "atlassian-connect-express"
-
+require("dotenv").config()
 // Use Handlebars as view engine:
 // https://npmjs.org/package/express-hbs
 // http://handlebarsjs.com
@@ -30,7 +29,9 @@ import favicon from "serve-favicon"
 
 // Routes live here; this is the C in MVC
 import routes from "./routes"
-require("dotenv").config()
+
+import db from "./models"
+
 // Bootstrap Express and atlassian-connect-express
 const app = express()
 const addon = ace(app)
@@ -97,8 +98,14 @@ db.addon = addon.settings
 //Now you can use the queries like this db.addon.getAllClientInfos() or db.addon._get({id: 2})
 
 // Boot the HTTP server
+const server = http.createServer(app)
+
+// boot the websockets
+import socketAnalytics from "./routes/analyticSockets"
+socketAnalytics(socketIo(server))
+
 db.sequelize.sync().then(() => {
-  http.createServer(app).listen(port, () => {
+  server.listen(port, () => {
     console.log("App server running at http://" + os.hostname() + ":" + port)
 
     // Enables auto registration/de-registration of app into a host in dev mode
