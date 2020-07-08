@@ -62,16 +62,21 @@ export const getThumbnails = (tenantId, videoId, cb) => {
 
   // get the required objects keys
   s3.listObjectsV2(listObjectsParams, async (err, data) => {
-    console.log("data------>", data)
-    console.log("Contents------>", data.Contents)
-    const keys = data.Contents.map((content) => content.Key)
-    const getObjectParams = {
-      Bucket: bucket,
-      Key: keys[0],
-      Expires: 30 * 60,
+    if (data.Contents.length === 0) {
+      // return falsy value
+      cb("")
+    } else {
+      console.log("data------>", data)
+      console.log("Contents------>", data.Contents)
+      const keys = data.Contents.map((content) => content.Key)
+      const getObjectParams = {
+        Bucket: bucket,
+        Key: keys[0],
+        Expires: 30 * 60,
+      }
+      // get the signed url for one object key
+      // TODO: Refactor with Promise.all() to get all objects (all thumbnails)
+      cb(await s3.getSignedUrlPromise("getObject", getObjectParams))
     }
-    // get the signed url for one object key
-    // TODO: Refactor with Promise.all() to get all objects (all thumbnails)
-    cb(await s3.getSignedUrlPromise("getObject", getObjectParams))
   })
 }
