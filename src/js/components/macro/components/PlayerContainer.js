@@ -19,13 +19,18 @@ const PlayerContainer = ({ video }) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = React.useState(true)
+  const [duration, setDuration] = React.useState(0)
+  const [videoId, setVideoId] = React.useState("")
+  const [isSocketConnection, setIsSocketConnection] = React.useState(false)
   const controllerRef = useRef()
 
   useEffect(() => {
     if (video) {
+      const videoIdProps = JSON.parse(video).value
+      setVideoId(videoIdProps)
       AP.context.getToken(async function (token) {
         try {
-          const { data } = await getPlayUrl(video, token)
+          const { data } = await getPlayUrl(videoIdProps, token)
           setPlayUrl(data.url)
           setLoading(false)
         } catch (e) {
@@ -39,46 +44,32 @@ const PlayerContainer = ({ video }) => {
   useEffect(() => {
     if (!loading) {
       AP.context.getToken(async (jwt) => {
-        const socket = io(`${ENDPOINT}`, {
-          query: { token: `${jwt}` },
-        })
-        socket.on("connect", () => {
-          socket.emit("storeClientInfo", {
-            customId: "dadasdas FROM CONFLUENCE",
-          })
-          // either with send()
-          socket.send("Hello!")
-
-          // or with emit() and custom event names
-          socket.emit(
-            "salutations",
-            "Hello!",
-            { mr: " Ali" },
-            Uint8Array.from([1, 2, 3, 4])
-          )
-          // handle the event sent with socket.send()
-          socket.on("message", (data) => {
-            console.log(data)
-          })
-
-          // handle the event sent with socket.emit()
-          socket.on("greetings", (elem1, elem2, elem3) => {
-            console.log(elem1, elem2, elem3)
-          })
-        })
         const videoElement = controllerRef.current.getVideoElement()
-        console.log("what is video element", videoElement)
-        console.log("DURATIOn", videoElement.duration)
-        const eventEmitter = initEmitter()
-        videoElement.addEventListener("loadedmetadata", (event) =>
-          console.log("duration", videoElement.duration)
+
+        videoElement.addEventListener("loadedmetadata", () =>
+          setDuration(videoElement.duration)
         )
-        videoElement.addEventListener("canplay", (event) =>
-          eventEmitter.emit(CANPLAY, event, videoElement.currentTime)
+
+        let eventEmitter
+        let socket
+        videoElement.addEventListener(
+          "play",
+          async () => {
+            socket = io(`${ENDPOINT}`, {
+              query: { token: `${jwt}` },
+            })
+            eventEmitter = initEmitter(socket)
+            await socket.on("connect", () => {
+              setIsSocketConnection(true)
+              console.log(`Session for ${videoId} connected`)
+              socket.emit("storeClientInfo", {
+                videoId: videoId,
+              })
+            })
+          },
+          { once: true }
         )
-        videoElement.addEventListener("play", (event) =>
-          eventEmitter.emit(PLAY, event, videoElement.currentTime)
-        )
+
         videoElement.addEventListener("pause", (event) =>
           eventEmitter.emit(
             PAUSE,
@@ -106,9 +97,6 @@ const PlayerContainer = ({ video }) => {
           videoElement.removeEventListener("loadedmetadata", (event) =>
             console.log("duration", videoElement.duration)
           )
-          videoElement.removeEventListener("canplay", (event) =>
-            eventEmitter.emit(CANPLAY, event, videoElement.currentTime)
-          )
           videoElement.removeEventListener("play", (event) =>
             eventEmitter.emit(PLAY, event, videoElement.currentTime)
           )
@@ -126,16 +114,17 @@ const PlayerContainer = ({ video }) => {
           videoElement.removeEventListener("seeked", (event) =>
             eventEmitter.emit(SEEKED, event, videoElement.currentTime)
           )
-          videoElement.removeEventListener("ended", (event) =>
+          videoElement.removeEventListener("ended", (event) => {
             eventEmitter.emit(
               ENDED,
               event,
               videoElement.currentTime,
               videoElement.played
             )
-          )
+            setIsSocketConnection(false)
+          })
+          socket.disconnect()
         }
-        socket.disconnect()
       })
     }
   }, [loading])
@@ -156,9 +145,9 @@ const PlayerContainer = ({ video }) => {
   )
 }
 
-function getPlayUrl(video, token) {
+function getPlayUrl(videoId, token) {
   const body = {
-    videoId: JSON.parse(video).value,
+    videoId: videoId,
   }
   const headers = { Authorization: `JWT ${token}` }
   return axios.post(`video-player-play`, body, {

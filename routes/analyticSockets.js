@@ -25,8 +25,8 @@ export default function (io) {
     socket.atlUserId = identity.sub ? identity.sub : ""
 
     socket.on("storeClientInfo", (data) => {
-      console.log("connected custom id:", data.customId)
-      socket.customId = data.customId
+      console.log("connected video id:", data.videoId)
+      socket.videoId = data.videoId
     })
     // either with send()
     socket.send("jjjkjkj!")
@@ -39,6 +39,15 @@ export default function (io) {
     // handle the event sent with socket.send()
     socket.on("message", (data) => {
       console.log(data)
+    })
+
+    socket.on("paused", (data, currentTime) => {
+      console.log("received pause event", data)
+      console.log("received pause event with CurrenTime", currentTime)
+    })
+
+    socket.on("ended", (data) => {
+      console.log("received ended event", data)
     })
 
     // handle the event sent with socket.emit()
