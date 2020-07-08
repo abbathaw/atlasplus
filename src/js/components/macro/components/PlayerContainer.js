@@ -53,21 +53,25 @@ const PlayerContainer = ({ video }) => {
         videoElement.addEventListener(
           "play",
           async () => {
-            socket = io(`${ENDPOINT}`, {
-              query: { token: `${jwt}` },
-            })
-            eventEmitter = initEmitter(socket)
-            await socket.on("connect", () => {
-              setIsSocketConnection(true)
-              console.log(`Session for ${videoId} connected`)
-              socket.emit("storeClientInfo", {
-                videoId: videoId,
-                duration: videoElement.duration,
-              })
-            })
+            await playCallback()
           },
           { once: true }
         )
+
+        const playCallback = async () => {
+          socket = io(`${ENDPOINT}`, {
+            query: { token: `${jwt}` },
+          })
+          eventEmitter = initEmitter(socket)
+          await socket.on("connect", () => {
+            setIsSocketConnection(true)
+            console.log(`Session for ${videoId} connected`)
+            socket.emit("storeClientInfo", {
+              videoId: videoId,
+              duration: videoElement.duration,
+            })
+          })
+        }
 
         videoElement.addEventListener("timeupdate", () =>
           eventEmitter.emit(TIMEUPDATE, videoElement.currentTime)
@@ -103,8 +107,9 @@ const PlayerContainer = ({ video }) => {
           videoElement.removeEventListener("loadedmetadata", () =>
             setDuration(videoElement.duration)
           )
-          videoElement.removeEventListener("play", (event) =>
-            console.log("play listener removed")
+          videoElement.removeEventListener(
+            "play",
+            async (event) => await playCallback()
           )
           videoElement.removeEventListener("pause", (event) =>
             eventEmitter.emit(
