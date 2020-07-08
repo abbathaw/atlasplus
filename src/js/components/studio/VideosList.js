@@ -6,19 +6,19 @@ import Button from "@atlaskit/button"
 import styled from "styled-components"
 import Page, { Grid, GridColumn } from "@atlaskit/page"
 import { Thumbnail } from "./Thumbnail"
-import { AnalyticsDrawer } from "./AnalyticsDrawer"
+import { AnalyticsModal } from "./AnalyticsModal"
 
 const VideosList = () => {
   const [videos, setVideos] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [token, setToken] = useState("")
-  const [isAnalyticsDrawerOpen, setIsAnalyticsDrawerOpen] = useState(false)
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
 
   const openDrawer = () => {
-    setIsAnalyticsDrawerOpen(true)
+    setIsAnalyticsModalOpen(true)
     // AP.resize(1800, 1800)
   }
-  const closeDrawer = () => setIsAnalyticsDrawerOpen(false)
+  const closeModal = () => setIsAnalyticsModalOpen(false)
 
   useEffect(() => {
     //get Token to call backend
@@ -47,13 +47,13 @@ const VideosList = () => {
               <Grid key={index}>
                 <GridColumn medium={12}>
                   <VideoCard
-                    style={
-                      isAnalyticsDrawerOpen
-                        ? {
-                            "min-height": "90vh",
-                          }
-                        : {}
-                    }
+                  // style={
+                  //   isAnalyticsModalOpen
+                  //     ? {
+                  //         "min-height": "90vh",
+                  //       }
+                  //     : {}
+                  // }
                   >
                     <Grid>
                       <GridColumn medium={3}>
@@ -92,10 +92,10 @@ const VideosList = () => {
                               Show more analytics
                             </Button>
                           </p>
-                          {isAnalyticsDrawerOpen && (
-                            <AnalyticsDrawer
+                          {isAnalyticsModalOpen && (
+                            <AnalyticsModal
                               video={video}
-                              closeDrawer={closeDrawer}
+                              closeModal={closeModal}
                             />
                           )}
                         </CardContainer>

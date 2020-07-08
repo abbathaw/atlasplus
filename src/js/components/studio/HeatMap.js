@@ -1,12 +1,42 @@
 import React from "react"
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts"
 
-const res = [
-  [0, 6, 8, 10],
-  [0, 12],
-  [0, 17],
-  [20, 27],
+// for a 10 second video from 4 users (enrollments)
+const dbQueryRes = [
+  [6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+  [6, 6, 6, 6, 6, 0, 0, 0, 0, 0],
+  [6, 6, 6, 6, 6, 0, 0, 0, 0, 0],
+  [6, 6, 6, 6, 6, 0, 0, 0, 0, 0],
+  [6, 6, 6, 6, 3, 6, 6, 6, 6, 6],
 ]
+
+// To be used when session closes to consolidate watch times for user enrollment
+const stackCompoundedTimeRange = (currentCompoundedTimeRange, newTimeRange) => {
+  let spreadNewTimeRange = spreadTimeRangeArray(newTimeRange)
+  for (let i = 0; i < spreadNewTimeRange.length; i++) {
+    currentCompoundedTimeRange[spreadNewTimeRange[i]]++
+  }
+  return currentCompoundedTimeRange
+}
+
+const stackUniqueVideoCompoundedTimeRageFromAllUsers = (
+  arrayOfUsersTimeRanges
+) => {
+  // response from db query
+  let videoDuration = arrayOfUsersTimeRanges[0].length
+  let uniqueVideoCompoundedTimeRageFromAllUsers = new Array(videoDuration).fill(
+    0
+  )
+
+  for (let i = 0; i < arrayOfUsersTimeRanges.length; i++) {
+    for (let j = 0; j < videoDuration; j++) {
+      if (arrayOfUsersTimeRanges[i][j]) {
+        uniqueVideoCompoundedTimeRageFromAllUsers[j]++
+      }
+    }
+  }
+  return uniqueVideoCompoundedTimeRageFromAllUsers
+}
 
 const spreadTimeRangeArray = (timeRangeArray) => {
   let collected = []
@@ -24,21 +54,24 @@ const spreadTimeRangeArray = (timeRangeArray) => {
   return collected
 }
 
-const createGraphData = (res) => {
-  let allUserTimeRanges = res.flatMap((userTR) => spreadTimeRangeArray(userTR)) //try flat map
-  console.log("allUserTimeRanges ", allUserTimeRanges)
-  let result = allUserTimeRanges.reduce((total, value) => {
-    total[value] = (total[value] || 0) + 1
-    return total
-  }, {})
-  console.log("result ", result)
-  let processedResult = Object.entries(result).map(([k, v]) => {
-    return { second: k, count: v }
-  })
-  console.log("processed result ", processedResult)
+const createGraphData = (uniqueVideoCompoundedTimeRageFromAllUsers) => {
+  // param can also be from one user
+
+  let processedResult = uniqueVideoCompoundedTimeRageFromAllUsers.map(
+    (count, timestamp) => {
+      return {
+        second: timestamp,
+        count: count,
+      }
+    }
+  )
+  console.log("results ", processedResult)
+
   return processedResult
 }
-const data = createGraphData(res)
+const data = createGraphData(
+  stackUniqueVideoCompoundedTimeRageFromAllUsers(dbQueryRes)
+)
 
 const HeatMap = () => {
   return (
