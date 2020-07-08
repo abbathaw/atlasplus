@@ -49,9 +49,7 @@ export default function (io) {
       } else {
         const enrollmentId = uuidv4()
 
-        const initialTimeRange = new Array(Math.round(data.duration) + 1).fill(
-          0
-        )
+        const initialTimeRange = new Array(Math.round(data.duration)).fill(0)
         await createEnrollment(
           enrollmentId,
           data.videoId,

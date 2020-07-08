@@ -37,14 +37,13 @@ export const VideoAnalytics = ({ token, video }) => {
     <Spinner />
   ) : (
     <>
-      <h4>
-        <em>View count</em>
-      </h4>
-      <p>{localData.length} views</p>
+      <h3>
+        <b>{localData.length}</b>
+      </h3>
+      <p>Unique plays</p>
       <p>
         <Button
-          spacing={"none"}
-          appearance={"link"}
+          appearance={"default"}
           onClick={() => openModal(video, localData)}
         >
           View analytics

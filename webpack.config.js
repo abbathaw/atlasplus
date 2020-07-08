@@ -33,6 +33,7 @@ module.exports = {
                   regenerator: true,
                 },
               ],
+              ["recharts"],
             ],
           },
         },
