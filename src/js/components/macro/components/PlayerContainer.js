@@ -10,6 +10,7 @@ import {
   PLAY,
   SEEKED,
   SEEKING,
+  TIMEUPDATE,
 } from "../../../services/EventService"
 
 import io from "socket.io-client"
@@ -72,7 +73,11 @@ const PlayerContainer = ({ video }) => {
         )
 
         videoElement.addEventListener("timeupdate", () =>
-          socket.emit("timeupdate", { currentTime: videoElement.currentTime })
+          eventEmitter.emit(
+            TIMEUPDATE,
+            videoElement.currentTime,
+            videoElement.played
+          )
         )
 
         videoElement.addEventListener("pause", (event) =>
@@ -119,6 +124,15 @@ const PlayerContainer = ({ video }) => {
           videoElement.removeEventListener("seeked", (event) =>
             eventEmitter.emit(SEEKED, event, videoElement.currentTime)
           )
+
+          videoElement.removeEventListener("timeupdate", () =>
+            eventEmitter.emit(
+              TIMEUPDATE,
+              videoElement.currentTime,
+              videoElement.played
+            )
+          )
+
           videoElement.removeEventListener("ended", (event) => {
             eventEmitter.emit(
               ENDED,

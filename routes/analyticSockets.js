@@ -67,22 +67,24 @@ export default function (io) {
       }
     })
 
-    socket.on("paused", async (data, currentTime) => {
-      await updateSession(socket.sessionId, data)
+    socket.on("paused", async (timeRange, currentTime) => {
+      await updateSession(socket.sessionId, timeRange)
     })
 
-    socket.on("timeupdate", (data) => {
-      socket.videoCurrentTime = data.currentTime
+    socket.on("timeupdate", (timeRange, currentTime) => {
+      socket.timeRange = timeRange
+      socket.videoCurrentTime = currentTime
     })
 
-    socket.on("ended", async (data, currentTime) => {
+    socket.on("ended", async (timeRange, currentTime) => {
       socket.ended = true
-      await updateSession(socket.sessionId, data)
+      await updateSession(socket.sessionId, timeRange)
     })
 
     // handle the event sent with socket.emit()
     socket.on("disconnect", async () => {
       console.log("Client disconnected")
+      console.log("WHAT IS the time range", socket.timeRange)
       if (socket.sessionId) {
         await endSession(socket.sessionId, Math.floor(socket.videoCurrentTime))
       }

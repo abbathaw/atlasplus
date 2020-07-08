@@ -9,7 +9,7 @@ export const createSession = async (id, enrollmentId) => {
     startTime,
   })
     .then((session) => {
-      console.log("New Session created & saved to db")
+      console.log(`New Session ${id} created & saved to db`)
       return session
     })
     .catch((e) => {
@@ -25,17 +25,20 @@ export const updateSession = async (sessionId, timeRange) => {
     { where: { id: sessionId } }
   )
     .then((rows) => {
-      console.log(`New Session updated & saved to db.  Rows affected ${rows}.`)
+      console.log(
+        ` Session ${sessionId} updated & saved to db.  Rows affected ${rows}.`
+      )
     })
     .catch((e) => {
       console.error("Error updated Session created to db", e)
     })
 }
 
-export const endSession = async (sessionId, lastCurrentTime) => {
+export const endSession = async (sessionId, lastCurrentTimeProps) => {
   db.Session.findByPk(sessionId).then((session) => {
     const sessionEndtime = new Date()
-    const sessionDiff = sessionEndtime - session.startTime
+    const sessionStartTime = session.startTime ? session.startTime : new Date()
+    const sessionDiff = sessionEndtime - sessionStartTime
     const sessionDuration = Math.round(sessionDiff / 1000)
 
     db.Session.update(
@@ -44,7 +47,7 @@ export const endSession = async (sessionId, lastCurrentTime) => {
     )
       .then((rows) => {
         console.log(
-          `New Session updated & saved to db.  Rows affected ${rows}.`
+          ` ENDING session..Session ${sessionId} updated & saved to db.  Rows affected ${rows}.`
         )
       })
       .catch((e) => {
@@ -66,6 +69,9 @@ export const endSession = async (sessionId, lastCurrentTime) => {
         )
 
         const watched = calculateWatched(updatedTimeRange)
+        const lastCurrentTime = lastCurrentTimeProps
+          ? Math.floor(lastCurrentTimeProps)
+          : 0
 
         await updateEnrollment(
           enrollment.id,
@@ -92,7 +98,7 @@ const loopOnSession = (sessionArray, originalArray) => {
     if (i % 2 === 0) {
       let initial = sessionArray[i]
       let second = sessionArray[i + 1]
-      if (initial && second) {
+      if (initial !== undefined && second !== undefined) {
         arrayClone = target(initial, second, arrayClone)
       }
     }

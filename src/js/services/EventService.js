@@ -7,6 +7,7 @@ export const PAUSE = "pause"
 export const SEEKING = "seeking"
 export const SEEKED = "seeked"
 export const ENDED = "ended"
+export const TIMEUPDATE = "timeupdate"
 
 export const initEmitter = (socket) => {
   const eventEmitter = new EventEmitter()
@@ -21,6 +22,13 @@ export const initEmitter = (socket) => {
     console.log("pausing", data, currentTime, timeRanges)
     console.log("what is socket", socket)
     socket.emit("paused", timeRanges, currentTime)
+  })
+
+  eventEmitter.on(TIMEUPDATE, (data, currentTime, timeRange) => {
+    // const timeRanges = timeRangesToArray(timeRange)
+    console.log("timeupdate", timeRange)
+    const timeRanges = []
+    socket.emit("timeupdate", timeRanges, currentTime)
   })
 
   eventEmitter.on(SEEKING, (data, currentTime) =>
@@ -38,8 +46,6 @@ export const initEmitter = (socket) => {
 
   return eventEmitter
 }
-
-//TODO remove duplicate events (paused/ended) or just use timeranges from paused
 
 const timeRangesToArray = (time_ranges) => {
   const ranges = []
