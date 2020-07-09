@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react"
 import * as ReactDOM from "react-dom"
-import PlayerContainer from "./components/PlayerContainer"
 import PlayerOverlay from "./components/PlayerOverlay"
 import styled from "styled-components"
 import Spinner from "@atlaskit/spinner"
 const atlJwt = require("atlassian-jwt")
 
 const VideoMacro = () => {
-  const [title, setTitle] = useState("")
   const [assignedUsers, setAssignedUsers] = useState([])
   const [video, setVideo] = useState({})
   const [tenantId, setTenantId] = useState("")
@@ -33,7 +31,7 @@ const VideoMacro = () => {
   useEffect(() => {
     if (tenantId) {
       AP.confluence.getMacroData(function (data) {
-        setTitle(data.title)
+        console.log("users", data.users)
         setAssignedUsers(JSON.parse(data.users))
         setVideo(data.video)
         const videoObject = JSON.parse(data.video).value
@@ -48,7 +46,6 @@ const VideoMacro = () => {
 
   return (
     <MacroContainer>
-      <h5>{title}</h5>
       {isLoading ? (
         <Spinner />
       ) : (
