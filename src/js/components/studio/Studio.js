@@ -4,6 +4,7 @@ import Tabs from "@atlaskit/tabs"
 import VideosList from "./VideosList"
 import UploadVideo from "./UploadVideo"
 import { AnalyticsModal } from "./AnalyticsModal"
+import VideoUserAnalyticsTable from "./VideoUserAnalyticsTable"
 
 const TabSelectContext = React.createContext(null)
 const VideoAnalyticsModalContext = React.createContext(null)
@@ -15,8 +16,17 @@ export const useVideoAnalyticsModalContext = () =>
 const Studio = () => {
   const [selectedTab, setSelectedTab] = useState({ tab: 0 })
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
+  const [
+    isUserAnalyticsTableDisplayed,
+    setIsUserAnalyticsTableDisplayed,
+  ] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState(null)
   const [selectedVideoViewData, setSelectedVideoViewData] = useState([])
+  const [
+    selectedVideoViewDataForUser,
+    setSelectedVideoViewDataForUser,
+  ] = useState([])
+  const [selectedViewer, setSelectedViewer] = useState("")
 
   useEffect(() => {
     AP.sizeToParent({ hideFooter: true }, () => {
@@ -24,14 +34,29 @@ const Studio = () => {
     })
   }, [])
 
-  const openModal = (video, videoViewData) => {
+const openModal = (video, videoViewData, viewer = "") => {
     console.log("Modal videoViewData", videoViewData)
     setSelectedVideo(video)
-    setSelectedVideoViewData(videoViewData)
     setIsAnalyticsModalOpen(true)
+    viewer
+      ? setSelectedVideoViewDataForUser(videoViewData)
+      : setSelectedVideoViewData(videoViewData)
+    viewer && setSelectedViewer(viewer)
   }
 
-  const closeModal = () => setIsAnalyticsModalOpen(false)
+  const closeModal = () => {
+    setIsAnalyticsModalOpen(false)
+    setSelectedViewer("")
+  }
+
+  const loadWatchersTable = (video, videoViewData) => {
+    console.log("Loading Watchers Table with this data__>", videoViewData)
+    setSelectedVideo(video)
+    setSelectedVideoViewData(videoViewData)
+    setIsUserAnalyticsTableDisplayed(true)
+  }
+
+  const closeWatchersTable = () => setIsUserAnalyticsTableDisplayed(false)
 
   const tabs = [
     {
@@ -43,21 +68,37 @@ const Studio = () => {
 
   return (
     <div style={{ height: "100%" }}>
-      <VideoAnalyticsModalContext.Provider value={{ openModal }}>
+      <VideoAnalyticsModalContext.Provider
+        value={{ openModal, loadWatchersTable }}
+      >
         {selectedVideo && isAnalyticsModalOpen && (
           <AnalyticsModal
             video={selectedVideo}
             closeModal={closeModal}
-            videoViewData={selectedVideoViewData}
+            videoViewData={
+              selectedViewer
+                ? selectedVideoViewDataForUser
+                : selectedVideoViewData
+            }
+            viewer={selectedViewer}
           />
         )}
         <TabSelectContext.Provider value={{ selectedTab, setSelectedTab }}>
-          <Tabs
-            onSelect={(tab, index) => setSelectedTab({ tab: index })}
-            selected={tabs[selectedTab.tab]}
-            tabs={tabs}
-          />
+          {!isUserAnalyticsTableDisplayed && (
+            <Tabs
+              onSelect={(tab, index) => setSelectedTab({ tab: index })}
+              selected={tabs[selectedTab.tab]}
+              tabs={tabs}
+            />
+          )}
         </TabSelectContext.Provider>
+        {selectedVideo && isUserAnalyticsTableDisplayed && (
+          <VideoUserAnalyticsTable
+            video={selectedVideo}
+            videoViewData={selectedVideoViewData}
+            closeWatchersTable={closeWatchersTable}
+          />
+        )}
       </VideoAnalyticsModalContext.Provider>
     </div>
   )

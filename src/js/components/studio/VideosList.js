@@ -6,7 +6,7 @@ import Button from "@atlaskit/button"
 import styled from "styled-components"
 import Page, { Grid, GridColumn } from "@atlaskit/page"
 import { Thumbnail } from "./Thumbnail"
-import { VideoAnalytics } from "./VideoAnalytics"
+import { VideoAnalyticsActions } from "./VideoAnalyticsActions"
 
 const VideosList = () => {
   const [videos, setVideos] = useState([])
@@ -39,34 +39,28 @@ const VideosList = () => {
               <VideoCard>
                 <Grid>
                   <GridColumn medium={3}>
-                    <CardContainer>
+                    <ThumbnailContainer>
                       <Thumbnail videoId={video.id} token={token} />
-                    </CardContainer>
+                    </ThumbnailContainer>
                   </GridColumn>
-                  <GridColumn medium={6}>
+                  <GridColumn medium={5}>
                     <CardContainer>
-                      <div style={{ padding: "25px 0px" }}>
-                        <h2>
-                          <b>{video.name}</b>
-                        </h2>
-                        <p>
-                          <small>
-                            Duration:{" "}
-                            {new Date(parseInt(video.durationInMs))
-                              .toISOString()
-                              .substr(11, 8)}{" "}
-                            | Status: {video.status} | Upload date:{" "}
-                            {new Date(video.updatedAt).toDateString()}
-                          </small>
-                        </p>
-                      </div>
+                      <h2>
+                        <b>{video.name}</b>
+                      </h2>
+                      <p>
+                        <small>
+                          Duration:{" "}
+                          {new Date(parseInt(video.durationInMs))
+                            .toISOString()
+                            .substr(11, 8)}{" "}
+                          | Status: {video.status} | Upload date:{" "}
+                          {new Date(video.updatedAt).toDateString()}
+                        </small>
+                      </p>
                     </CardContainer>
                   </GridColumn>
-                  <GridColumn medium={3}>
-                    <CardContainer>
-                      <VideoAnalytics video={video} token={token} />
-                    </CardContainer>
-                  </GridColumn>
+                  <VideoAnalyticsActions video={video} token={token} />
                 </Grid>
               </VideoCard>
             </GridColumn>
@@ -103,6 +97,12 @@ const VideoCard = styled.div`
 `
 
 const CardContainer = styled.div`
+  padding: 20px 5px 0px 5px;
+  margin: 5px;
+  text-align: center;
+  height: 100px;
+`
+const ThumbnailContainer = styled.div`
   padding: 5px;
   margin: 5px;
   text-align: center;

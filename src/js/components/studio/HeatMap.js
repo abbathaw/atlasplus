@@ -38,7 +38,7 @@ const addColumns = (arrays, unique = true) => {
   }
 }
 
-const HeatMap = ({ videoViewData }) => {
+const HeatMap = ({ videoViewData, viewer }) => {
   const [isUniqueAggregation, setIsUniqueAggregation] = useState(true)
   const [uniqueAggregationData, setUniqueAggregationData] = useState([])
   const [cumulativeAggregationData, setCumulativeAggregationData] = useState([])
@@ -99,6 +99,7 @@ const HeatMap = ({ videoViewData }) => {
         <GridColumn medium={5}>
           <SelectContainer>
             <Select
+              autoFocus={false}
               className="single-select"
               classNamePrefix="react-select"
               options={aggregationMethodOptions}
@@ -115,13 +116,15 @@ const HeatMap = ({ videoViewData }) => {
         <GridColumn medium={2}>
           <StatContainer>
             <StatsLabel>Completion Rate</StatsLabel>
-            <Stats>{completionRate}%</Stats>
+            <Stats>{viewer ? Math.round(progressRate) : completionRate}%</Stats>
           </StatContainer>
         </GridColumn>
         <GridColumn medium={3}>
           <StatContainer>
-            <StatsLabel>Average Watched Rate</StatsLabel>
-            <Stats>{progressRate > 90 ? 100 : Math.round(progressRate)}%</Stats>
+            <StatsLabel>
+              {!viewer ? "Average Watched Rate" : "Watched Rate"}
+            </StatsLabel>
+            <Stats>{Math.round(progressRate)}%</Stats>
           </StatContainer>
         </GridColumn>
         <GridColumn medium={2}>
