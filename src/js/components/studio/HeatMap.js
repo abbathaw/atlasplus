@@ -136,7 +136,7 @@ const HeatMap = ({ videoViewData, viewer }) => {
           </StatContainer>
         </GridColumn>
         <GridColumn medium={12}>
-          <ResponsiveContainer width="100%" aspect={1.78}>
+          <ResponsiveContainer width="99%" height="99.8%" aspect={3}>
             <LineChart
               data={
                 isUniqueAggregation
