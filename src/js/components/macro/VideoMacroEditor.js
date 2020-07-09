@@ -4,7 +4,6 @@ import Form, { HelperMessage, FormFooter, Field } from "@atlaskit/form"
 import TextField from "@atlaskit/textfield"
 import Select, { AsyncSelect } from "@atlaskit/select"
 import Spinner from "@atlaskit/spinner"
-import Button from "@atlaskit/button"
 import axios from "axios"
 import { NoVideosWarning } from "./NoVideosWarning"
 
@@ -33,7 +32,6 @@ const VideoMacroEditor = () => {
               headers: { Authorization: `JWT ${token}` },
             }
           )
-          console.log("available videos-------------->", spaceVideos)
           setIsLoading(false)
           setVideos(
             spaceVideos.map((video) => {

@@ -21,7 +21,6 @@ export const Thumbnail = ({ videoId, token }) => {
     } = await axios.get(`video-studio/videoThumbnails?videoId=${videoId}`, {
       headers: { Authorization: `JWT ${token}` },
     })
-    console.log("url-------------->", thumbnailUrl)
     return thumbnailUrl
   }
 
@@ -40,9 +39,8 @@ export const Thumbnail = ({ videoId, token }) => {
 }
 
 const ThumbnailImg = styled.img`
-  padding: 2px 8px;
   border-radius: 5px 5px 0 0;
-  width: 100%;
+  height: 100%;
   max-width: 300px;
-  margin: 10px 2px 0 2px;
+  max-height: 100px;
 `
