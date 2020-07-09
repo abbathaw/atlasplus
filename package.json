@@ -36,6 +36,7 @@
     "@atlaskit/tabs": "^12.0.0",
     "@atlaskit/textarea": "^3.0.0",
     "@atlaskit/textfield": "^4.0.0",
+    "@atlaskit/tooltip": "^16.0.0",
     "atlassian-connect-express": "^4.0.1",
     "atlassian-jwt": "^1.0.3",
     "aws-sdk": "^2.706.0",
