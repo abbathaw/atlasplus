@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import HeatMap from "./HeatMap"
 import Modal, { ModalTransition } from "@atlaskit/modal-dialog"
 import { NoVideoDataWarning } from "./NoVideoDataWarning"
@@ -11,7 +11,7 @@ export const AnalyticsModal = ({ video, closeModal, videoViewData }) => {
       <Modal
         actions={footerButtons}
         onClose={closeModal}
-        heading={`${video.name} analytics`}
+        heading={`${video.name} Analytics`}
         width={"xlarge"}
       >
         {videoViewData.length === 0 ? (

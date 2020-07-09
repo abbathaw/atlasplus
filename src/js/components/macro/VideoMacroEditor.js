@@ -30,7 +30,6 @@ const VideoMacroEditor = () => {
               headers: { Authorization: `JWT ${token}` },
             }
           )
-          console.log("available videos-------------->", spaceVideos)
           setIsLoading(false)
           setVideos(
             spaceVideos.map((video) => {

@@ -93,18 +93,14 @@ const getSpaceVideos = async (req, res) => {
 const getVideoThumbnails = (req, res) => {
   const { iss: tenantId } = parseJwtInHeader(req)
   const videoId = req.query.videoId
-  console.log("video id ----->", videoId)
   getThumbnails(tenantId, videoId, (signedUrl) => {
-    console.log("signed url ----->", signedUrl)
     res.json({ thumbnailUrl: signedUrl })
   })
 }
 
 const getVideoViewData = async (req, res) => {
   const videoId = req.query.videoId
-  console.log("video id ----->", videoId)
   const enrollments = await getEnrollmentsByVideoId(videoId)
-  console.log("enrollments")
   res.json({ enrollments })
 }
 

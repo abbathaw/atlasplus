@@ -32,13 +32,12 @@ const saveNewVideo = async (
 }
 
 const getTenantVideosBySpace = async (tenantId, spaceId) => {
-  let videos = await db.Video.findAll({
+  return db.Video.findAll({
     where: {
       tenantId,
       spaceId,
     },
   })
-  return videos
 }
 
 const getFileExtension = (fileType) => {

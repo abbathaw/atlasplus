@@ -1,57 +1,194 @@
-import React from "react"
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts"
+import React, { useEffect, useState } from "react"
+import {
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip as ChartTooltip,
+  XAxis,
+  YAxis,
+} from "recharts"
+import Page, { Grid, GridColumn } from "@atlaskit/page"
+import Select from "@atlaskit/select"
+import styled from "styled-components"
 
-const stackUniqueVideoCompoundedTimeRangeFromAllUsers = (
-  arrayOfUsersTimeRanges
-) => {
-  // response from db query
-  let videoDuration = arrayOfUsersTimeRanges[0].length
-  let uniqueVideoCompoundedTimeRangeFromAllUsers = new Array(
-    videoDuration
-  ).fill(0)
-
-  for (let i = 0; i < arrayOfUsersTimeRanges.length; i++) {
-    for (let j = 0; j < videoDuration; j++) {
-      if (arrayOfUsersTimeRanges[i][j]) {
-        uniqueVideoCompoundedTimeRangeFromAllUsers[j]++
-      }
+const createGraphDataStructure = (timeRangeArray) => {
+  return timeRangeArray.map((count, timestamp) => {
+    return {
+      second: timestamp,
+      "view count": count,
     }
-  }
-  return uniqueVideoCompoundedTimeRangeFromAllUsers
+  })
 }
 
-// param can also be from one user
-const createGraphData = (uniqueVideoCompoundedTimeRangeFromAllUsers) => {
-  let processedResult = uniqueVideoCompoundedTimeRangeFromAllUsers.map(
-    (count, timestamp) => {
-      return {
-        second: timestamp,
-        count: count,
-      }
-    }
-  )
-  console.log("processed videoViewData ", processedResult)
-
-  return processedResult
+const addColumns = (arrays, unique = true) => {
+  if (unique) {
+    return arrays.reduce((accum, array) => {
+      array.forEach((element, index) => {
+        accum[index] = (accum[index] || 0) + (element > 0 ? 1 : 0)
+      })
+      return accum
+    }, [])
+  } else {
+    return arrays.reduce((accum, array) => {
+      array.forEach((element, index) => {
+        accum[index] = (accum[index] || 0) + element
+      })
+      return accum
+    }, [])
+  }
 }
 
 const HeatMap = ({ videoViewData }) => {
+  const [isUniqueAggregation, setIsUniqueAggregation] = useState(true)
+  const [uniqueAggregationData, setUniqueAggregationData] = useState([])
+  const [cumulativeAggregationData, setCumulativeAggregationData] = useState([])
+  const [timeSpent] = useState(() =>
+    videoViewData.reduce((total, curr) => curr.timeSpent + total, 0)
+  )
+  const [completionRate] = useState(
+    () =>
+      (videoViewData.reduce(
+        (total, curr) => (curr.isCompleted ? total + 1 : total),
+        0
+      ) /
+        videoViewData.length) *
+      100
+  )
+  const [progressRate] = useState(
+    () =>
+      (videoViewData.reduce(
+        (total, curr) => parseFloat(curr.watched) + total,
+        0
+      ) /
+        videoViewData.length) *
+      100
+  )
+
+  useEffect(() => {
+    if (uniqueAggregationData.length === 0) {
+      let processedData = createGraphDataStructure(
+        addColumns(timeRangeOfAllEnrollments)
+      )
+      processedData.pop()
+      setUniqueAggregationData(processedData)
+    } else if (cumulativeAggregationData.length === 0) {
+      let processedData = createGraphDataStructure(
+        addColumns(timeRangeOfAllEnrollments, false)
+      )
+      processedData.pop()
+      setCumulativeAggregationData(processedData)
+    }
+  }, [isUniqueAggregation])
+
   const timeRangeOfAllEnrollments = videoViewData.map(
     (enrollment) => enrollment.timeRange
   )
-  const stackedTimeRangeOfAllEnrollments = stackUniqueVideoCompoundedTimeRangeFromAllUsers(
-    timeRangeOfAllEnrollments
-  )
-  let processedData = createGraphData(stackedTimeRangeOfAllEnrollments)
-  processedData.pop()
+
+  const aggregationMethodOptions = [
+    { value: "unique", label: "Unique plays only" },
+    { value: "cumulative", label: "Cumulative plays" },
+  ]
+
+  const selectHandler = (option) => {
+    setIsUniqueAggregation(option.value === "unique")
+  }
 
   return (
-    <LineChart width={1000} height={500} data={processedData}>
-      <Line type="monotone" dataKey="count" stroke="#8884d8" />
-      <XAxis dataKey="second" />
-      <YAxis allowDecimals={false} />
-    </LineChart>
+    <Page>
+      <Grid>
+        <GridColumn medium={5}>
+          <SelectContainer>
+            <Select
+              className="single-select"
+              classNamePrefix="react-select"
+              options={aggregationMethodOptions}
+              placeholder={aggregationMethodOptions[0].label}
+              onChange={selectHandler}
+              value={
+                isUniqueAggregation
+                  ? aggregationMethodOptions[0]
+                  : aggregationMethodOptions[1]
+              }
+            />
+          </SelectContainer>
+        </GridColumn>
+        <GridColumn medium={2}>
+          <StatContainer>
+            <StatsLabel>Completion Rate</StatsLabel>
+            <Stats>{completionRate}%</Stats>
+          </StatContainer>
+        </GridColumn>
+        <GridColumn medium={3}>
+          <StatContainer>
+            <StatsLabel>Average Watched Rate</StatsLabel>
+            <Stats>{progressRate > 90 ? 100 : Math.round(progressRate)}%</Stats>
+          </StatContainer>
+        </GridColumn>
+        <GridColumn medium={2}>
+          <StatContainer>
+            <StatsLabel>Total Time Spent</StatsLabel>
+            <Stats>
+              {new Date(timeSpent * 1000).toISOString().substr(11, 8)}
+            </Stats>
+          </StatContainer>
+        </GridColumn>
+        <GridColumn medium={12}>
+          <ResponsiveContainer width="100%" aspect={1.78}>
+            <LineChart
+              data={
+                isUniqueAggregation
+                  ? uniqueAggregationData
+                  : cumulativeAggregationData
+              }
+            >
+              <XAxis
+                dataKey="second"
+                label={{
+                  value: "Second",
+                  offset: -5,
+                  position: "insideBottom",
+                }}
+              />
+              <YAxis
+                allowDecimals={false}
+                label={{
+                  value: "View Count",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <ChartTooltip />
+              <Line type="monotone" dataKey="view count" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </GridColumn>
+      </Grid>
+    </Page>
   )
 }
+
+const SelectContainer = styled.div`
+  height: 60px;
+  width: 50%;
+  margin: 0 5px 10px 5px;
+  padding: 5px;
+`
+
+const StatContainer = styled.div`
+  border-right: 2px black dotted;
+  height: 60px;
+  text-align: center;
+  width: 100%;
+  margin: 0 5px 10px 5px;
+  padding: 5px;
+`
+
+const Stats = styled.p`
+  color: #8884d8;
+  font-size: calc(1vw + 10px);
+`
+const StatsLabel = styled.p`
+  font-size: 1vw;
+`
 
 export default HeatMap
