@@ -4,29 +4,22 @@ import axios from "axios"
 import Spinner from "@atlaskit/spinner"
 import MediaServicesNoImageIcon from "@atlaskit/icon/glyph/media-services/no-image"
 
-export const Thumbnail = ({ videoId, token }) => {
+export const Thumbnail = ({ video }) => {
   const [thumbnail, setThumbnail] = useState("")
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    getVideoThumbnails().then((thumbnailUrl) => {
-      thumbnailUrl && setThumbnail(thumbnailUrl)
+    if (video && !objIsEmpty(video)) {
+      let num = 1
+      const thumbnailUrl = `https://${process.env.S3_BUCKET_NAME}.s3-us-west-2.amazonaws.com/output/${video.tenantId}/${video.id}/thumbnails/${video.fileId}thumbnail.000000${num}.jpg`
+      setThumbnail(thumbnailUrl)
       setIsLoading(false)
-    })
-  }, [])
-
-  const getVideoThumbnails = async () => {
-    const {
-      data: { thumbnailUrl },
-    } = await axios.get(`video-studio/videoThumbnails?videoId=${videoId}`, {
-      headers: { Authorization: `JWT ${token}` },
-    })
-    return thumbnailUrl
-  }
+    }
+  }, [video])
 
   return isLoading ? (
     <Spinner />
-  ) : thumbnail ? (
+  ) : video.status === "ready" ? (
     <ThumbnailImg src={thumbnail} alt={"thumbnail"} />
   ) : (
     <>
@@ -36,6 +29,10 @@ export const Thumbnail = ({ videoId, token }) => {
       </p>
     </>
   )
+}
+
+const objIsEmpty = (obj) => {
+  return Object.keys(obj).length === 0 && obj.constructor === Object
 }
 
 const ThumbnailImg = styled.img`
