@@ -3,7 +3,12 @@ import HeatMap from "./HeatMap"
 import Modal, { ModalTransition } from "@atlaskit/modal-dialog"
 import { NoVideoDataWarning } from "./NoVideoDataWarning"
 
-export const AnalyticsModal = ({ video, closeModal, videoViewData }) => {
+export const AnalyticsModal = ({
+  video,
+  closeModal,
+  videoViewData,
+  viewer,
+}) => {
   const footerButtons = [{ text: "Close", onClick: closeModal }]
 
   return (
@@ -11,13 +16,17 @@ export const AnalyticsModal = ({ video, closeModal, videoViewData }) => {
       <Modal
         actions={footerButtons}
         onClose={closeModal}
-        heading={`${video.name} Analytics`}
+        heading={
+          viewer
+            ? `${video.name} Analytics for ${viewer}`
+            : `${video.name} Analytics`
+        }
         width={"xlarge"}
       >
         {videoViewData.length === 0 ? (
           <NoVideoDataWarning />
         ) : (
-          <HeatMap videoViewData={videoViewData} />
+          <HeatMap videoViewData={videoViewData} viewer={viewer} />
         )}
       </Modal>
     </ModalTransition>
