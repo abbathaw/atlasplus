@@ -40,7 +40,7 @@ const VideosList = () => {
                 <Grid>
                   <GridColumn medium={3}>
                     <ThumbnailContainer>
-                      <Thumbnail videoId={video.id} token={token} />
+                      <Thumbnail video={video} />
                     </ThumbnailContainer>
                   </GridColumn>
                   <GridColumn medium={5}>
