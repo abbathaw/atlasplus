@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from "react"
 import * as ReactDOM from "react-dom"
 import Form, { HelperMessage, FormFooter, Field } from "@atlaskit/form"
-import TextField from "@atlaskit/textfield"
 import Select, { AsyncSelect } from "@atlaskit/select"
 import Spinner from "@atlaskit/spinner"
 import axios from "axios"
 import { NoVideosWarning } from "./NoVideosWarning"
 
 const VideoMacroEditor = () => {
-  const [title, setTitle] = useState("")
   const [assignedUsers, setAssignedUsers] = useState([])
   const editorFormSubmitButtonEl = useRef(null)
   const [videos, setVideos] = useState([])
@@ -37,7 +35,7 @@ const VideoMacroEditor = () => {
             spaceVideos.map((video) => {
               return {
                 label: video.name,
-                value: video.id,
+                value: video,
               }
             })
           )
@@ -54,9 +52,8 @@ const VideoMacroEditor = () => {
   }, [])
 
   const getMacroData = () => {
-    AP.confluence.getMacroData(({ title, users, video }) => {
-      console.log("MACRO DATA EDITOR_________>", title, users, video)
-      title && setTitle(title)
+    AP.confluence.getMacroData(({ users, video }) => {
+      console.log("MACRO DATA EDITOR_________>", users, video)
       users && setAssignedUsers(JSON.parse(users))
       video && setSelectedVideo(JSON.parse(video))
     })
@@ -64,7 +61,6 @@ const VideoMacroEditor = () => {
 
   const saveMacro = (data) => {
     let macroParams = {
-      title: data.title,
       users: JSON.stringify(data.users),
       video: JSON.stringify(data.video),
     }
@@ -105,41 +101,6 @@ const VideoMacroEditor = () => {
           {({ formProps }) => (
             <form {...formProps}>
               <Field
-                name="title"
-                defaultValue={title}
-                label="Video Title"
-                isRequired
-              >
-                {({ fieldProps }) => (
-                  <>
-                    <TextField {...fieldProps} />
-                    <HelperMessage>Title to describe the video.</HelperMessage>
-                  </>
-                )}
-              </Field>
-              <Field
-                name="users"
-                defaultValue={assignedUsers}
-                label="Assigned User(s)"
-                isRequired
-              >
-                {({ fieldProps }) => (
-                  <>
-                    <AsyncSelect
-                      {...fieldProps}
-                      className="async-select-with-callback"
-                      classNamePrefix="react-select"
-                      loadOptions={promiseOptions}
-                      placeholder="Select users"
-                      isMulti
-                    />
-                    <HelperMessage>
-                      Users assigned to view the video.
-                    </HelperMessage>
-                  </>
-                )}
-              </Field>
-              <Field
                 name="video"
                 defaultValue={selectedVideo}
                 label="Video"
@@ -160,6 +121,28 @@ const VideoMacroEditor = () => {
                   </>
                 )}
               </Field>
+              <Field
+                name="users"
+                defaultValue={assignedUsers}
+                label="Assigned User(s)"
+              >
+                {({ fieldProps }) => (
+                  <>
+                    <AsyncSelect
+                      {...fieldProps}
+                      className="async-select-with-callback"
+                      classNamePrefix="react-select"
+                      loadOptions={promiseOptions}
+                      placeholder="Select users"
+                      isMulti
+                    />
+                    <HelperMessage>
+                      Users assigned to view the video.
+                    </HelperMessage>
+                  </>
+                )}
+              </Field>
+
               <button
                 hidden={true}
                 type={"submit"}

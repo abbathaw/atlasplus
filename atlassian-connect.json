@@ -2,10 +2,10 @@
   "key": "atlasplus",
   "name": "Atlas Plus Video Studio",
   "description": "The ultimate video solution for all of your needs",
-  "baseUrl": "https://d210a8d7cd21.ngrok.io/",
+  "baseUrl": "https://atlasplus.ap.ngrok.io/",
   "links": {
-    "self": "https://d210a8d7cd21.ngrok.io/atlassian-connect.json",
-    "homepage": "https://d210a8d7cd21.ngrok.io/atlassian-connect.json"
+    "self": "https://atlasplus.ap.ngrok.io/atlassian-connect.json",
+    "homepage": "https://atlasplus.ap.ngrok.io/atlassian-connect.json"
   },
   "authentication": {
     "type": "jwt"
@@ -75,21 +75,12 @@
         "categories": ["media", "confluence-content", "external-content"],
         "parameters": [
           {
-            "identifier": "title",
-            "name": {
-              "value": "Video Title"
-            },
-            "type": "string",
-            "required": true,
-            "multiple": false
-          },
-          {
             "identifier": "users",
             "name": {
               "value": "Assigned User(s)"
             },
             "type": "username",
-            "required": true,
+            "required": false,
             "multiple": true
           },
           {

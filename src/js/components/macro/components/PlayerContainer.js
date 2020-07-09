@@ -13,35 +13,47 @@ import {
 import io from "socket.io-client"
 const ENDPOINT = `${process.env.WSS_BASE_URL}/analytics`
 
-const PlayerContainer = ({ video }) => {
+const PlayerContainer = ({
+  videoIdProps,
+  isAutoPlay,
+  setEnded,
+  jwtToken,
+  isDrm,
+}) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = React.useState(true)
+  const [tokenLoaded, setTokenLoaded] = React.useState(false)
   const [duration, setDuration] = React.useState(0)
   const [videoId, setVideoId] = React.useState("")
   const [isSocketConnection, setIsSocketConnection] = React.useState(false)
+  const [videoToken, setVideoToken] = useState("")
   const controllerRef = useRef()
 
   useEffect(() => {
-    if (video) {
-      const videoIdProps = JSON.parse(video).value
-      setVideoId(videoIdProps)
-      AP.context.getToken(async function (token) {
+    if (videoIdProps) {
+      ;(async function (jwtToken) {
         try {
-          const { data } = await getPlayUrl(videoIdProps, token)
+          setVideoId(videoIdProps)
+          const { data } = await getPlayUrl(videoIdProps, jwtToken)
           setPlayUrl(data.url)
+          if (isDrm) {
+            const tokenData = await getDrmToken(videoIdProps, jwtToken)
+            setVideoToken(tokenData.data.token)
+          }
+          setTokenLoaded(true)
           setLoading(false)
         } catch (e) {
           console.error("Some error happened getting the play url", e)
           setError("An error happened")
         }
-      })
+      })(jwtToken)
     }
-  }, [video])
+  }, [videoIdProps])
 
   useEffect(() => {
-    if (!loading) {
-      AP.context.getToken(async (jwt) => {
+    if (!loading && tokenLoaded) {
+      ;(async function (jwtToken) {
         const videoElement = controllerRef.current.getVideoElement()
 
         videoElement.addEventListener("loadedmetadata", () =>
@@ -60,7 +72,7 @@ const PlayerContainer = ({ video }) => {
 
         const playCallback = async () => {
           socket = io(`${ENDPOINT}`, {
-            query: { token: `${jwt}` },
+            query: { token: `${jwtToken}` },
           })
           eventEmitter = initEmitter(socket)
           await socket.on("connect", () => {
@@ -94,14 +106,15 @@ const PlayerContainer = ({ video }) => {
             videoElement.played
           )
         )
-        videoElement.addEventListener("ended", (event) =>
+        videoElement.addEventListener("ended", (event) => {
           eventEmitter.emit(
             ENDED,
             event,
             videoElement.currentTime,
             videoElement.played
           )
-        )
+          setEnded()
+        })
 
         return () => {
           videoElement.removeEventListener("loadedmetadata", () =>
@@ -140,28 +153,44 @@ const PlayerContainer = ({ video }) => {
               videoElement.currentTime,
               videoElement.played
             )
-            setIsSocketConnection(false)
+            setEnded()
           })
+          setIsSocketConnection(false)
           socket.disconnect()
         }
-      })
+      })(jwtToken)
     }
-  }, [loading])
+  }, [loading, tokenLoaded])
 
   return (
     <div>
       {error ? (
         <div>{error}</div>
       ) : (
-        <div style={{ height: "700px", width: "100%" }}>
+        <div style={{ height: "100%", width: "100%" }}>
           {" "}
-          {!loading && (
-            <ShakaPlayer autoplay={false} src={playUrl} ref={controllerRef} />
+          {!loading && tokenLoaded && (
+            <ShakaPlayer
+              autoPlay={isAutoPlay}
+              src={playUrl}
+              ref={controllerRef}
+              drmToken={videoToken}
+            />
           )}
         </div>
       )}
     </div>
   )
+}
+
+function getDrmToken(videoId, token) {
+  const body = {
+    videoId: videoId,
+  }
+  const headers = { Authorization: `JWT ${token}` }
+  return axios.post(`playToken`, body, {
+    headers,
+  })
 }
 
 function getPlayUrl(videoId, token) {
