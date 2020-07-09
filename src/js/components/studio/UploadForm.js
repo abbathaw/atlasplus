@@ -7,6 +7,8 @@ import InlineMessage from "@atlaskit/inline-message"
 import Toggle from "@atlaskit/toggle"
 import { Progress } from "react-sweet-progress"
 import axios from "axios"
+import ReactTooltip from "react-tooltip"
+import EditorPanelIcon from "@atlaskit/icon/glyph/editor/panel"
 
 // let cancelToken = axios.CancelToken
 // let source = cancelToken.source()
@@ -14,7 +16,7 @@ import axios from "axios"
 const UploadForm = ({ resetForm }) => {
   const [title, setTitle] = useState("")
   const [file, setFile] = useState(null)
-  const [isDRM, setIsDRM] = useState(true)
+  const [isDRM, setIsDRM] = useState(false)
   const [error, setError] = useState("")
   const [fileUploading, setFileUploading] = useState(false)
   const [loaded, setLoaded] = useState(0)
@@ -177,10 +179,17 @@ const UploadForm = ({ resetForm }) => {
           />
         </div>
         <div style={{ marginTop: "20px" }}>
-          <Toggle size="large" isDefaultChecked onChange={toggleDrm} />{" "}
+          <Toggle size="large" onChange={toggleDrm} />{" "}
           <span style={{ verticalAlign: "text-bottom" }}>
-            Protect this video with DRM
+            Protect this video with DRM{" "}
+            <span
+              data-tip="Digital Rights Management (currently supported only in chrome/firefox)"
+              style={{ verticalAlign: "bottom" }}
+            >
+              <EditorPanelIcon size="medium" />
+            </span>
           </span>
+          <ReactTooltip />
         </div>
         <div style={{ marginTop: "10px" }}>
           {error && (

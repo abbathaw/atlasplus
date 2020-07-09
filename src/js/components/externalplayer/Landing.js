@@ -30,8 +30,46 @@ const useStyles = makeStyles((theme) =>
 
 const Landing = ({ videoId, token, title, isDrm }) => {
   const classes = useStyles()
+  const [browser, setBrowser] = useState("")
+  const [unSafeBrowser, setUnSafeBrowser] = useState(false)
 
-  console.log("Received props", videoId, token, title)
+  useEffect(() => {
+    const browser = (function () {
+      const test = function (regexpOrCss) {
+        return regexpOrCss instanceof RegExp
+          ? regexpOrCss.test(window.navigator.userAgent)
+          : window.CSS &&
+              window.CSS.supports &&
+              window.CSS.supports(regexpOrCss)
+      }
+      switch (true) {
+        case test(/edg/i):
+          return "Edge"
+        case test(/trident/i):
+          return "IE"
+        case test(/opr/i) && (!!window.opr || !!window.opera):
+          return "Opera"
+        case test("(-webkit-touch-callout: none)"):
+          return "ios-safari"
+        case test(/chrome/i) && !!window.chrome:
+          return "Chrome"
+        case test(/firefox/i):
+          return "Firefox"
+        case test(/safari/i):
+          return "Safari"
+        default:
+          return "other"
+      }
+    })()
+    console.log("browser detected", browser)
+    if (browser === "Firefox" || browser === "Chrome") {
+      setUnSafeBrowser(false)
+      setBrowser(browser)
+    } else {
+      setUnSafeBrowser(true)
+      setBrowser(browser)
+    }
+  }, [])
 
   const handleEndShow = () => {
     console.log("video ended")
@@ -41,7 +79,14 @@ const Landing = ({ videoId, token, title, isDrm }) => {
   return (
     <Container>
       <Card className={classes.card}>
-        <CardHeader title={title} />
+        <CardHeader
+          title={title}
+          subheader={
+            unSafeBrowser
+              ? `We have detected that your browser is ${browser}. At the moment, we are only supporting DRM content on Chrome, or Firefox browsers, so this content might not work properly. We are sorry for the inconvenience`
+              : ``
+          }
+        />
         <CardContent>
           <PlayerContainer
             videoIdProps={videoId}

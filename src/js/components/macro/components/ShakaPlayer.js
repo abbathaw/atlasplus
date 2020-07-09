@@ -58,10 +58,8 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
           .getNetworkingEngine()
           .registerRequestFilter(function (type, request) {
             // Only add headers to license requests:
-            console.log("AMM III HERER", type)
             if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
               // This is the specific header name and value the server wants:
-              console.log("AMM III HERER kkkk", drmToken)
               request.headers["pallycon-customdata-v2"] = drmToken
             }
           })

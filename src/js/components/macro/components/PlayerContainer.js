@@ -35,7 +35,6 @@ const PlayerContainer = ({
       ;(async function (jwtToken) {
         try {
           setVideoId(videoIdProps)
-          console.log("Im in first useffect", jwtToken, isDrm)
           const { data } = await getPlayUrl(videoIdProps, jwtToken)
           setPlayUrl(data.url)
           if (isDrm) {
@@ -54,9 +53,7 @@ const PlayerContainer = ({
 
   useEffect(() => {
     if (!loading && tokenLoaded) {
-      console.log("Im here 33", tokenLoaded, videoToken)
       ;(async function (jwtToken) {
-        console.log("Im here 43", tokenLoaded, jwtToken)
         const videoElement = controllerRef.current.getVideoElement()
 
         videoElement.addEventListener("loadedmetadata", () =>
@@ -74,7 +71,6 @@ const PlayerContainer = ({
         )
 
         const playCallback = async () => {
-          console.log("attempt to play callback", jwtToken)
           socket = io(`${ENDPOINT}`, {
             query: { token: `${jwtToken}` },
           })
