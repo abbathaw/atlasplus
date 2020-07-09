@@ -11,7 +11,7 @@ export const AnalyticsModal = ({ video, closeModal, videoViewData }) => {
       <Modal
         actions={footerButtons}
         onClose={closeModal}
-        heading={`${video.name} analytics`}
+        heading={`${video.name} Analytics`}
         width={"xlarge"}
       >
         {videoViewData.length === 0 ? (

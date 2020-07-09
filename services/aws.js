@@ -66,8 +66,6 @@ export const getThumbnails = (tenantId, videoId, cb) => {
       // return falsy value
       cb("")
     } else {
-      console.log("data------>", data)
-      console.log("Contents------>", data.Contents)
       const keys = data.Contents.map((content) => content.Key)
       const getObjectParams = {
         Bucket: bucket,
