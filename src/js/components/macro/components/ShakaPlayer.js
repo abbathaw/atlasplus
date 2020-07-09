@@ -102,7 +102,7 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
         autoPlay={autoPlay}
         width="100%"
         height="100%"
-        style={{ maxWidth: "100%" }}
+        style={{ maxWidth: "100%", maxHeight: "480px" }}
       />
     </div>
   )

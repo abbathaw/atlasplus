@@ -38,7 +38,6 @@ const getTenantVideosBySpace = async (tenantId, spaceId) => {
       spaceId,
     },
   })
-  console.log("The query: ", videos)
   return videos
 }
 

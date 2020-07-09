@@ -26,7 +26,7 @@ export default function (io) {
   })
 
   analyticsIo.on("connection", (socket) => {
-    // console.log("socketId", socket.id)
+    console.log("socketId", socket.id)
     const token = socket.handshake.query.token
     const identity = decodeToken(token)
     socket.tenant = identity.iss

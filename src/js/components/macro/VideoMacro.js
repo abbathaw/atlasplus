@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react"
 import * as ReactDOM from "react-dom"
 import PlayerContainer from "./components/PlayerContainer"
-
+import PlayerOverlay from "./components/PlayerOverlay"
+import styled from "styled-components"
 const VideoMacro = () => {
   const [title, setTitle] = useState("")
   const [assignedUsers, setAssignedUsers] = useState([])
   const [video, setVideo] = useState("")
+
+  useEffect(() => {
+    AP.resize()
+  }, [])
 
   useEffect(() => {
     AP.confluence.getMacroData(function (data) {
@@ -13,16 +18,22 @@ const VideoMacro = () => {
       setTitle(data.title)
       setAssignedUsers(data.users)
       setVideo(data.video)
+      // const videoId =  JSON.parse(data).video.value
     })
   }, [])
 
   return (
-    <div className="aui-item">
+    <MacroContainer>
       <h5>{title}</h5>
       <PlayerContainer video={video} />
-    </div>
+    </MacroContainer>
   )
 }
+
+const MacroContainer = styled.div`
+  width: 100%;
+  height: 500px;
+`
 
 function getQueryParams() {
   let paramsObj = {}

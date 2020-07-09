@@ -27,7 +27,6 @@ export const getPlayUrl = async (req, res) => {
       res.status(404).send("Video not found")
     }
   })
-  res.status(200).send("ok")
 }
 
 export const getPlayUrlTest = async (req, res) => {
@@ -48,5 +47,4 @@ export const getPlayUrlTest = async (req, res) => {
       res.status(404).send("Video not found")
     }
   })
-  res.status(200).send("ok")
 }

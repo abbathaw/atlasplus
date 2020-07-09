@@ -35,6 +35,7 @@ const PlayerContainer = ({ video }) => {
           setLoading(false)
           const tokenData = await getDrmToken(videoIdProps, token)
           setVideoToken(tokenData.data.token)
+          console.log("wwwh", tokenData.data)
           setTokenLoaded(true)
         } catch (e) {
           console.error("Some error happened getting the play url", e)
@@ -46,7 +47,7 @@ const PlayerContainer = ({ video }) => {
 
   useEffect(() => {
     if (!loading && tokenLoaded) {
-      console.log("Im here", tokenLoaded, videoToken)
+      console.log("Im here 33", tokenLoaded, videoToken)
       AP.context.getToken(async (jwt) => {
         const videoElement = controllerRef.current.getVideoElement()
 
@@ -152,14 +153,14 @@ const PlayerContainer = ({ video }) => {
         }
       })
     }
-  }, [loading])
+  }, [loading, tokenLoaded])
 
   return (
     <div>
       {error ? (
         <div>{error}</div>
       ) : (
-        <div style={{ height: "700px", width: "100%" }}>
+        <div style={{ height: "100%", width: "100%" }}>
           {" "}
           {!loading && tokenLoaded && (
             <ShakaPlayer
