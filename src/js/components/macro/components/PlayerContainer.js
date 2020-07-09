@@ -16,8 +16,9 @@ const ENDPOINT = `${process.env.WSS_BASE_URL}/analytics`
 const PlayerContainer = ({
   videoIdProps,
   isAutoPlay,
-  showPlayer,
   setEnded,
+  jwtToken,
+  isDrm,
 }) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
@@ -31,27 +32,31 @@ const PlayerContainer = ({
 
   useEffect(() => {
     if (videoIdProps) {
-      setVideoId(videoIdProps)
-      AP.context.getToken(async function (token) {
+      ;(async function (jwtToken) {
         try {
-          const { data } = await getPlayUrl(videoIdProps, token)
+          setVideoId(videoIdProps)
+          console.log("Im in first useffect", jwtToken, isDrm)
+          const { data } = await getPlayUrl(videoIdProps, jwtToken)
           setPlayUrl(data.url)
-          setLoading(false)
-          const tokenData = await getDrmToken(videoIdProps, token)
-          setVideoToken(tokenData.data.token)
+          if (isDrm) {
+            const tokenData = await getDrmToken(videoIdProps, jwtToken)
+            setVideoToken(tokenData.data.token)
+          }
           setTokenLoaded(true)
+          setLoading(false)
         } catch (e) {
           console.error("Some error happened getting the play url", e)
           setError("An error happened")
         }
-      })
+      })(jwtToken)
     }
   }, [videoIdProps])
 
   useEffect(() => {
     if (!loading && tokenLoaded) {
       console.log("Im here 33", tokenLoaded, videoToken)
-      AP.context.getToken(async (jwt) => {
+      ;(async function (jwtToken) {
+        console.log("Im here 43", tokenLoaded, jwtToken)
         const videoElement = controllerRef.current.getVideoElement()
 
         videoElement.addEventListener("loadedmetadata", () =>
@@ -69,8 +74,9 @@ const PlayerContainer = ({
         )
 
         const playCallback = async () => {
+          console.log("attempt to play callback", jwtToken)
           socket = io(`${ENDPOINT}`, {
-            query: { token: `${jwt}` },
+            query: { token: `${jwtToken}` },
           })
           eventEmitter = initEmitter(socket)
           await socket.on("connect", () => {
@@ -156,7 +162,7 @@ const PlayerContainer = ({
           setIsSocketConnection(false)
           socket.disconnect()
         }
-      })
+      })(jwtToken)
     }
   }, [loading, tokenLoaded])
 
@@ -173,7 +179,6 @@ const PlayerContainer = ({
               src={playUrl}
               ref={controllerRef}
               drmToken={videoToken}
-              showPlayer={showPlayer}
             />
           )}
         </div>

@@ -43,8 +43,8 @@ export const triggerMediaConvertJob = (
   const outPutPath = `s3://${bucket}/${OUTPUT_PREFIX}/${contextPath}/`
 
   const jobParams = isDRM
-    ? getJobTemplate(fullSourcePath, outPutPath)
-    : getJobTemplateWithDRM(fullSourcePath, outPutPath, videoId)
+    ? getJobTemplateWithDRM(fullSourcePath, outPutPath, videoId)
+    : getJobTemplate(fullSourcePath, outPutPath)
 
   // Create a promise on a MediaConvert object
   return new AWS.MediaConvert({ apiVersion: "2017-08-29" })

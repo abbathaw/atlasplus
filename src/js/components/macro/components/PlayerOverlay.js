@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import NotificationAllIcon from "@atlaskit/icon/glyph/notification-all"
 import LockIcon from "@atlaskit/icon/glyph/lock"
@@ -11,6 +11,15 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   const [showPlayer, setShowPlayer] = useState(false)
   const [isEnded, setIsEnded] = useState(false)
   const [imgUrl, setImgUrl] = useState("images/play.svg")
+  const [jwtToken, setJwtToken] = useState("")
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    AP.context.getToken(async function (token) {
+      setJwtToken(token)
+      setIsReady(true)
+    })
+  }, [])
 
   const handleEndShow = () => {
     setImgUrl("images/replay.svg")
@@ -19,16 +28,23 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   }
 
   const handleClickContainer = () => {
-    setShowPlayer(true)
+    if (video.drm) {
+      const externalLink = `${process.env.BASE_URL}/external-player?title=${video.name}&videoId=${video.id}&isdrm=${video.drm}&jwt=${jwtToken}`
+      window.open(externalLink)
+    } else {
+      setShowPlayer(true)
+    }
   }
 
   return (
     <>
-      {showPlayer ? (
+      {showPlayer && isReady ? (
         <PlayerContainer
           videoIdProps={video.id}
           isAutoPlay={true}
           setEnded={handleEndShow}
+          jwtToken={jwtToken}
+          isDrm={video.drm}
         />
       ) : (
         <Container onClick={handleClickContainer}>

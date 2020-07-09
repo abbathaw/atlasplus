@@ -1,9 +1,12 @@
+import { parseJwtInHeader } from "../services/jwt"
+
 const crypto = require("crypto")
 
-export const getDRMToken = (req, res) => {
+export const getDRMToken = async (req, res) => {
   try {
-    const videoId = "videoidddd" // "ca0da826-23fc-46d6-bf31-1af5c0006d58"
-    const userId = "557058:fa9be00d-75e6-4124-9e99-75610bdee922"
+    const videoId = req.body.videoId
+    const identity = await parseJwtInHeader(req)
+    const userId = identity.sub ? identity.sub : "testToken"
     // step 1 input setting values
     const AES_IV = "0123456789abcdef"
     const siteInfo = {

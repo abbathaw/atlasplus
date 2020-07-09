@@ -30,13 +30,25 @@ export default function routes(app, addon) {
 
   app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
 
-  app.post("/video-player-play", playerController.getPlayUrl) //TODO add addon auth here
+  app.post(
+    "/video-player-play",
+    addon.authenticate(),
+    playerController.getPlayUrl
+  ) //TODO add addon auth here
 
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 
   app.post("/snsTopic", bodyParser.text(), processSns)
 
-  app.post("/playToken", drmController.getDRMToken)
+  app.post("/playToken", addon.authenticate(), drmController.getDRMToken)
+
+  app.get("/external-player", addon.authenticate(), function (req, res) {
+    const token = req.query.jwt ? req.query.jwt : "test"
+    const videoId = req.query.videoId
+    const title = req.query.title
+    const isdrm = req.query.isdrm
+    res.render("player-external", { token, videoId, title, isdrm })
+  })
 
   //testing purposes only
   app.get("/test-player", function (req, res) {

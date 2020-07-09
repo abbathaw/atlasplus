@@ -12,6 +12,7 @@ module.exports = {
     VideoMacro: "./src/js/components/macro/VideoMacro.js",
     VideoMacroEditor: "./src/js/components/macro/VideoMacroEditor.js",
     TestPlayer: "./src/js/components/testplayer/TestPlayer.js",
+    Landing: "./src/js/components/externalplayer/Landing.js",
   },
   output: {
     path: OUTPUT_DIR,

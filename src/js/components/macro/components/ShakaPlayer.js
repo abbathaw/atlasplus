@@ -1,7 +1,5 @@
 import React from "react"
 import shaka from "shaka-player/dist/shaka-player.ui"
-import shaka2 from "shaka-player/dist/shaka-player.compiled"
-// import "shaka-player/dist/controls.css"
 
 /**
  * A React component for shaka-player.
@@ -15,7 +13,7 @@ import shaka2 from "shaka-player/dist/shaka-player.compiled"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay, drmToken, showPlayer }, ref) => {
+const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -55,17 +53,19 @@ const ShakaPlayer = ({ src, autoPlay, drmToken, showPlayer }, ref) => {
   React.useEffect(() => {
     const { player } = controller.current
     if (player) {
-      player
-        .getNetworkingEngine()
-        .registerRequestFilter(function (type, request) {
-          // Only add headers to license requests:
-          console.log("AMM III HERER", type)
-          if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
-            // This is the specific header name and value the server wants:
-            console.log("AMM III HERER kkkk", drmToken)
-            request.headers["pallycon-customdata-v2"] = drmToken
-          }
-        })
+      if (drmToken) {
+        player
+          .getNetworkingEngine()
+          .registerRequestFilter(function (type, request) {
+            // Only add headers to license requests:
+            console.log("AMM III HERER", type)
+            if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
+              // This is the specific header name and value the server wants:
+              console.log("AMM III HERER kkkk", drmToken)
+              request.headers["pallycon-customdata-v2"] = drmToken
+            }
+          })
+      }
       player.configure(config)
     }
   }, [config, drmToken])
@@ -95,7 +95,13 @@ const ShakaPlayer = ({ src, autoPlay, drmToken, showPlayer }, ref) => {
 
   return (
     <div ref={uiContainerRef}>
-      <video ref={videoRef} autoPlay={autoPlay} width="100%" height="100%" />
+      <video
+        ref={videoRef}
+        autoPlay={autoPlay}
+        width="100%"
+        height="100%"
+        style={{ maxWidth: "100%", maxHeight: "480px" }}
+      />
     </div>
   )
 }
