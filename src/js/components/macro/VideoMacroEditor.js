@@ -39,7 +39,7 @@ const VideoMacroEditor = () => {
             spaceVideos.map((video) => {
               return {
                 label: video.name,
-                value: video.id,
+                value: video,
               }
             })
           )

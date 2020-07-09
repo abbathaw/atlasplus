@@ -3,29 +3,62 @@ import * as ReactDOM from "react-dom"
 import PlayerContainer from "./components/PlayerContainer"
 import PlayerOverlay from "./components/PlayerOverlay"
 import styled from "styled-components"
+import Spinner from "@atlaskit/spinner"
+const atlJwt = require("atlassian-jwt")
+
 const VideoMacro = () => {
   const [title, setTitle] = useState("")
   const [assignedUsers, setAssignedUsers] = useState([])
-  const [video, setVideo] = useState("")
+  const [video, setVideo] = useState({})
+  const [tenantId, setTenantId] = useState("")
+  const [thumbnailUrl, setThumbnailUrl] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentUserId, setCurrentUserId] = useState("")
 
   useEffect(() => {
     AP.resize()
   }, [])
 
   useEffect(() => {
-    AP.confluence.getMacroData(function (data) {
-      console.log("MACRO DATA _________>", data)
-      setTitle(data.title)
-      setAssignedUsers(data.users)
-      setVideo(data.video)
-      // const videoId =  JSON.parse(data).video.value
+    AP.context.getToken(async (token) => {
+      const decodedToken = atlJwt.decode(token, null, true)
+      const tenantId = decodedToken.iss
+      console.log("got TenantId", tenantId)
+      const userId = decodedToken.sub ? decodedToken.sub : ""
+      setCurrentUserId(userId)
+      setTenantId(tenantId)
     })
   }, [])
+
+  useEffect(() => {
+    if (tenantId) {
+      AP.confluence.getMacroData(function (data) {
+        setTitle(data.title)
+        setAssignedUsers(JSON.parse(data.users))
+        setVideo(data.video)
+        const videoObject = JSON.parse(data.video).value
+        let num = 1
+        const thumbnailUrl = `https://${process.env.S3_BUCKET_NAME}.s3-us-west-2.amazonaws.com/output/${tenantId}/${videoObject.id}/thumbnails/${videoObject.fileId}thumbnail.000000${num}.jpg`
+        setThumbnailUrl(thumbnailUrl)
+        setVideo(videoObject)
+        setIsLoading(false)
+      })
+    }
+  }, [tenantId])
 
   return (
     <MacroContainer>
       <h5>{title}</h5>
-      <PlayerContainer video={video} />
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <PlayerOverlay
+          video={video}
+          thumbnailUrl={thumbnailUrl}
+          assignedUsers={assignedUsers}
+          currentUser={currentUserId}
+        />
+      )}
     </MacroContainer>
   )
 }

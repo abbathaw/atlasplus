@@ -73,11 +73,11 @@
     "@babel/core": "^7.10.3",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-transform-runtime": "^7.10.3",
-    "css-loader": "^3.6.0",
     "@babel/preset-env": "^7.10.3",
     "@babel/preset-react": "^7.10.1",
     "@babel/runtime": "^7.10.3",
     "babel-loader": "^8.1.0",
+    "css-loader": "^3.6.0",
     "eslint": "^5.16.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
@@ -89,6 +89,7 @@
     "regenerator-runtime": "^0.13.5",
     "sqlite3": "^4.1.1",
     "style-loader": "^1.2.1",
+    "svg-inline-loader": "^0.8.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   }
