@@ -1,11 +1,17 @@
 import { parseJwtInHeader } from "../services/jwt"
 import { getVideo } from "../services/videoService"
+const validate = require("uuid-validate")
 
 export const getPlayUrl = async (req, res) => {
   const identity = await parseJwtInHeader(req)
   const tenantId = identity.iss
 
   const videoId = req.body.videoId
+
+  console.log("whhh", videoId)
+  if (!validate(videoId)) {
+    res.status(400).send("Invalid videoId")
+  }
 
   await getVideo(videoId).then((video) => {
     if (video) {
@@ -21,11 +27,16 @@ export const getPlayUrl = async (req, res) => {
       res.status(404).send("Video not found")
     }
   })
-  res.status(200)
+  res.status(200).send("ok")
 }
 
 export const getPlayUrlTest = async (req, res) => {
   const videoId = req.body.videoId
+
+  if (!validate(videoId)) {
+    console.log("whhh", validate(videoId))
+    return res.status(400).send("Invalid videoId")
+  }
 
   await getVideo(videoId).then((video) => {
     if (video) {
@@ -37,5 +48,5 @@ export const getPlayUrlTest = async (req, res) => {
       res.status(404).send("Video not found")
     }
   })
-  res.status(200)
+  res.status(200).send("ok")
 }

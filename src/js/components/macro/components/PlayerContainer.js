@@ -34,7 +34,7 @@ const PlayerContainer = ({ video }) => {
           setPlayUrl(data.url)
           setLoading(false)
           const tokenData = await getDrmToken(videoIdProps, token)
-          setVideoToken(tokenData.token)
+          setVideoToken(tokenData.data.token)
           setTokenLoaded(true)
         } catch (e) {
           console.error("Some error happened getting the play url", e)

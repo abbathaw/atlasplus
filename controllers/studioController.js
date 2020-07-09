@@ -78,7 +78,7 @@ const saveVideo = async (req, res) => {
     res.status(201).send("created new video")
   } catch (e) {
     console.error("An error occurred saving the new video", e)
-    res.status(500)
+    res.status(500).send("error")
   }
 }
 

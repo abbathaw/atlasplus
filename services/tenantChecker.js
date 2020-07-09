@@ -41,6 +41,6 @@ export const tenantValidator = function (req, res, next) {
     })
     .catch((e) => {
       console.error("couldn't find tenant got error", e)
-      res.status(404).send(e)
+      res.status(404).send("error finding tenant")
     })
 }

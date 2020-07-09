@@ -30,11 +30,17 @@ export default function routes(app, addon) {
 
   app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
 
-  app.post("/video-player-play", playerController.getPlayUrl)
+  app.post("/video-player-play", playerController.getPlayUrl) //TODO add addon auth here
 
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 
   app.post("/snsTopic", bodyParser.text(), processSns)
 
   app.post("/playToken", drmController.getDRMToken)
+
+  //testing purposes only
+  app.get("/test-player", function (req, res) {
+    res.render("player-test")
+  })
+  app.post("/video-player-play-test", playerController.getPlayUrlTest)
 }

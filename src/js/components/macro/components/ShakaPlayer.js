@@ -60,16 +60,16 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
         .registerRequestFilter(function (type, request) {
           // Only add headers to license requests:
           console.log("AMM III HERER", type)
-          if (type == shaka2.net.NetworkingEngine.RequestType.LICENSE) {
+          if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
             // This is the specific header name and value the server wants:
-            console.log("AMM III HERER")
+            console.log("AMM III HERER kkkk", drmToken)
             request.headers["pallycon-customdata-v2"] = drmToken
           }
         })
       player.configure(config)
       console.log("okkkk", player.getNetworkingEngine())
     }
-  }, [config])
+  }, [config, drmToken])
 
   // Load the source url when we have one.
   React.useEffect(() => {
