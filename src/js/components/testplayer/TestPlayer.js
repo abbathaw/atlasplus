@@ -8,7 +8,7 @@ const JustPlayer = () => {
   useEffect(() => {
     const video = {
       title: "Video Title",
-      id: "ca0da826-23fc-46d6-bf31-1af5c0006d58",
+      id: "4e8fa8b4-591b-47dd-a23a-1d25a21c0b51",
     }
     setVideo(video)
   }, [])

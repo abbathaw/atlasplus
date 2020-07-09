@@ -1,36 +1,47 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import NotificationAllIcon from "@atlaskit/icon/glyph/notification-all"
 import LockIcon from "@atlaskit/icon/glyph/lock"
+import PlayerContainer from "./PlayerContainer"
 
 const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   const isCurrentUser =
     assignedUsers.filter((users) => users.value === currentUser).length > 0
 
+  const [showPlayer, setShowPlayer] = useState(false)
+
+  const handleClickContainer = () => {
+    setShowPlayer(true)
+  }
+
   return (
-    <Container>
-      <Img src={thumbnailUrl} alt="thumbnail" />
-      <Content>
-        <Title> {video.name}</Title>
-        <PlayLogo src="images/play.svg" />
-        <Footer>
-          {isCurrentUser && (
-            <Invited>
-              {" "}
-              <NotificationAllIcon size="small" primaryColor="white" /> You've
-              been invited to watch this video.
-            </Invited>
-          )}
-          {video.drm && (
-            <DRM>
-              {" "}
-              <LockIcon size="small" primaryColor="white" /> This video is DRM
-              protected. It will open in a new tab
-            </DRM>
-          )}
-        </Footer>
-      </Content>
-    </Container>
+    <>
+      {showPlayer ? (
+        <PlayerContainer videoIdProps={video.id} isAutoPlay={true} />
+      ) : (
+        <Container onClick={handleClickContainer}>
+          <Img src={thumbnailUrl} alt="thumbnail" />
+          <Content>
+            <Title> {video.name}</Title>
+            <PlayLogo src="images/play.svg" />
+            <Footer>
+              {isCurrentUser && (
+                <Invited>
+                  <NotificationAllIcon size="small" primaryColor="white" />{" "}
+                  You've been invited to watch this video.
+                </Invited>
+              )}
+              {video.drm && (
+                <DRM>
+                  <LockIcon size="small" primaryColor="white" /> This video is
+                  DRM protected. It will open in a new tab
+                </DRM>
+              )}
+            </Footer>
+          </Content>
+        </Container>
+      )}
+    </>
   )
 }
 export default PlayerOverlay

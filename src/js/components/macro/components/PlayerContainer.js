@@ -13,7 +13,8 @@ import {
 import io from "socket.io-client"
 const ENDPOINT = `${process.env.WSS_BASE_URL}/analytics`
 
-const PlayerContainer = ({ video }) => {
+const PlayerContainer = ({ videoIdProps, isAutoPlay, showPlayer }) => {
+  console.log("AMMMI AUTOPLAY from coddntainer", isAutoPlay)
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = React.useState(true)
@@ -25,8 +26,7 @@ const PlayerContainer = ({ video }) => {
   const controllerRef = useRef()
 
   useEffect(() => {
-    if (video) {
-      const videoIdProps = JSON.parse(video).value
+    if (videoIdProps) {
       setVideoId(videoIdProps)
       AP.context.getToken(async function (token) {
         try {
@@ -43,7 +43,7 @@ const PlayerContainer = ({ video }) => {
         }
       })
     }
-  }, [video])
+  }, [videoIdProps])
 
   useEffect(() => {
     if (!loading && tokenLoaded) {
@@ -164,10 +164,11 @@ const PlayerContainer = ({ video }) => {
           {" "}
           {!loading && tokenLoaded && (
             <ShakaPlayer
-              autoplay={false}
+              autoPlay={isAutoPlay}
               src={playUrl}
               ref={controllerRef}
               drmToken={videoToken}
+              showPlayer={showPlayer}
             />
           )}
         </div>

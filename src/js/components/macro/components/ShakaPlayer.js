@@ -15,7 +15,7 @@ import shaka2 from "shaka-player/dist/shaka-player.compiled"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
+const ShakaPlayer = ({ src, autoPlay, drmToken, showPlayer }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -67,7 +67,6 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
           }
         })
       player.configure(config)
-      console.log("okkkk", player.getNetworkingEngine())
     }
   }, [config, drmToken])
 
@@ -75,7 +74,6 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
   React.useEffect(() => {
     const { player } = controller.current
     if (player) {
-      console.log("what is src", src)
       player.load(src)
     }
   }, [src])
@@ -97,13 +95,7 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
 
   return (
     <div ref={uiContainerRef}>
-      <video
-        ref={videoRef}
-        autoPlay={autoPlay}
-        width="100%"
-        height="100%"
-        style={{ maxWidth: "100%", maxHeight: "480px" }}
-      />
+      <video ref={videoRef} autoPlay={autoPlay} width="100%" height="100%" />
     </div>
   )
 }
