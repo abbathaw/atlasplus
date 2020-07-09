@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node -r dotenv/config -r esm app.js",
+    "start": "nodemon -r dotenv/config -r esm app.js",
     "lint": "eslint app.js routes",
     "build": "webpack",
     "dev": "npm-run-all --parallel start watch:build",
@@ -38,6 +38,8 @@
     "@atlaskit/tabs": "^12.0.0",
     "@atlaskit/textarea": "^3.0.0",
     "@atlaskit/textfield": "^4.0.0",
+    "@atlaskit/toggle": "^10.0.0",
+    "@material-ui/core": "^4.11.0",
     "atlassian-connect-express": "^4.0.1",
     "atlassian-jwt": "^1.0.3",
     "aws-sdk": "^2.706.0",
@@ -53,7 +55,7 @@
     "express": "^4.16.4",
     "express-hbs": "^2.3.3",
     "helmet": "^3.21.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.17",
     "moment": "^2.27.0",
     "morgan": "^1.9.1",
     "nocache": "^2.1.0",
@@ -61,6 +63,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-sweet-progress": "^1.1.2",
+    "react-tooltip": "^4.2.7",
     "recharts": "^1.8.5",
     "request": "^2.88.2",
     "sequelize": "^5.21.2",
@@ -69,7 +72,8 @@
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "styled-components": "^5.1.1",
-    "uuid": "^8.2.0"
+    "uuid": "^8.2.0",
+    "uuid-validate": "0.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.10.3",
@@ -91,6 +95,7 @@
     "prettier": "^2.0.5",
     "sqlite3": "^4.1.1",
     "style-loader": "^1.2.1",
+    "svg-inline-loader": "^0.8.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   }

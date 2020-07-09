@@ -1,6 +1,5 @@
 import React from "react"
 import shaka from "shaka-player/dist/shaka-player.ui"
-// import "shaka-player/dist/controls.css"
 
 /**
  * A React component for shaka-player.
@@ -14,7 +13,7 @@ import shaka from "shaka-player/dist/shaka-player.ui"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay }, ref) => {
+const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -22,6 +21,12 @@ const ShakaPlayer = ({ src, autoPlay }, ref) => {
   const config = {
     manifest: {
       dash: {},
+    },
+    drm: {
+      servers: {
+        "com.widevine.alpha":
+          "https://license.pallycon.com/ri/licenseManager.do",
+      },
     },
   }
 
@@ -48,15 +53,25 @@ const ShakaPlayer = ({ src, autoPlay }, ref) => {
   React.useEffect(() => {
     const { player } = controller.current
     if (player) {
+      if (drmToken) {
+        player
+          .getNetworkingEngine()
+          .registerRequestFilter(function (type, request) {
+            // Only add headers to license requests:
+            if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
+              // This is the specific header name and value the server wants:
+              request.headers["pallycon-customdata-v2"] = drmToken
+            }
+          })
+      }
       player.configure(config)
     }
-  }, [config])
+  }, [config, drmToken])
 
   // Load the source url when we have one.
   React.useEffect(() => {
     const { player } = controller.current
     if (player) {
-      console.log("what is src", src)
       player.load(src)
     }
   }, [src])
@@ -83,7 +98,7 @@ const ShakaPlayer = ({ src, autoPlay }, ref) => {
         autoPlay={autoPlay}
         width="100%"
         height="100%"
-        style={{ maxWidth: "100%" }}
+        style={{ maxWidth: "100%", maxHeight: "480px" }}
       />
     </div>
   )

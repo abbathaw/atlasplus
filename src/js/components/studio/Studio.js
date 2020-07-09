@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import * as ReactDOM from "react-dom"
 import Tabs from "@atlaskit/tabs"
 import VideosList from "./VideosList"
@@ -28,7 +28,13 @@ const Studio = () => {
   ] = useState([])
   const [selectedViewer, setSelectedViewer] = useState("")
 
-  const openModal = (video, videoViewData, viewer = "") => {
+  useEffect(() => {
+    AP.sizeToParent({ hideFooter: true }, () => {
+      console.log("resizeddddd")
+    })
+  }, [])
+
+const openModal = (video, videoViewData, viewer = "") => {
     console.log("Modal videoViewData", videoViewData)
     setSelectedVideo(video)
     setIsAnalyticsModalOpen(true)

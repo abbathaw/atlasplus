@@ -3,6 +3,7 @@ import studioRouter from "./studioRouter"
 import { tenantValidator } from "../services/tenantChecker"
 import { processSns } from "../controllers/snsController"
 import * as playerController from "../controllers/playerController"
+import * as drmController from "../controllers/drmController"
 const bodyParser = require("body-parser")
 
 export default function routes(app, addon) {
@@ -29,9 +30,29 @@ export default function routes(app, addon) {
 
   app.get("/editor", addon.authenticate(), macroController.videoMacroEditor)
 
-  app.post("/video-player-play", playerController.getPlayUrl)
+  app.post(
+    "/video-player-play",
+    addon.authenticate(),
+    playerController.getPlayUrl
+  ) //TODO add addon auth here
 
   app.use("/video-studio", addon.authenticate(), tenantValidator, studioRouter)
 
   app.post("/snsTopic", bodyParser.text(), processSns)
+
+  app.post("/playToken", addon.authenticate(), drmController.getDRMToken)
+
+  app.get("/external-player", addon.authenticate(), function (req, res) {
+    const token = req.query.jwt ? req.query.jwt : "test"
+    const videoId = req.query.videoId
+    const title = req.query.title
+    const isdrm = req.query.isdrm
+    res.render("player-external", { token, videoId, title, isdrm })
+  })
+
+  //testing purposes only
+  app.get("/test-player", function (req, res) {
+    res.render("player-test")
+  })
+  app.post("/video-player-play-test", playerController.getPlayUrlTest)
 }

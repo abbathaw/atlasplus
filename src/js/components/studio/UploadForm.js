@@ -4,8 +4,11 @@ import styled from "styled-components"
 import Spinner from "@atlaskit/spinner"
 import "react-sweet-progress/lib/style.css"
 import InlineMessage from "@atlaskit/inline-message"
+import Toggle from "@atlaskit/toggle"
 import { Progress } from "react-sweet-progress"
 import axios from "axios"
+import ReactTooltip from "react-tooltip"
+import EditorPanelIcon from "@atlaskit/icon/glyph/editor/panel"
 
 // let cancelToken = axios.CancelToken
 // let source = cancelToken.source()
@@ -13,6 +16,7 @@ import axios from "axios"
 const UploadForm = ({ resetForm }) => {
   const [title, setTitle] = useState("")
   const [file, setFile] = useState(null)
+  const [isDRM, setIsDRM] = useState(false)
   const [error, setError] = useState("")
   const [fileUploading, setFileUploading] = useState(false)
   const [loaded, setLoaded] = useState(0)
@@ -26,6 +30,11 @@ const UploadForm = ({ resetForm }) => {
       body: "We will notify you once the video is ready.",
       type: "success",
     })
+  }
+
+  const toggleDrm = () => {
+    const value = !isDRM
+    setIsDRM(value)
   }
 
   const handleUpload = async (event) => {
@@ -102,6 +111,7 @@ const UploadForm = ({ resetForm }) => {
       title,
       fileSize: file.size,
       fileType: file.type,
+      isDRM,
     }
     const headers = { Authorization: `JWT ${token}` }
     return await axios.post(`video-studio/saveVideo`, body, { headers })
@@ -167,6 +177,19 @@ const UploadForm = ({ resetForm }) => {
             onChange={(e) => setTitle(e.target.value)}
             required
           />
+        </div>
+        <div style={{ marginTop: "20px" }}>
+          <Toggle size="large" onChange={toggleDrm} />{" "}
+          <span style={{ verticalAlign: "text-bottom" }}>
+            Protect this video with DRM{" "}
+            <span
+              data-tip="Digital Rights Management (currently supported only in chrome/firefox)"
+              style={{ verticalAlign: "bottom" }}
+            >
+              <EditorPanelIcon size="medium" />
+            </span>
+          </span>
+          <ReactTooltip />
         </div>
         <div style={{ marginTop: "10px" }}>
           {error && (
