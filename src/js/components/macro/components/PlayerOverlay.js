@@ -9,6 +9,14 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
     assignedUsers.filter((users) => users.value === currentUser).length > 0
 
   const [showPlayer, setShowPlayer] = useState(false)
+  const [isEnded, setIsEnded] = useState(false)
+  const [imgUrl, setImgUrl] = useState("images/play.svg")
+
+  const handleEndShow = () => {
+    setImgUrl("images/replay.svg")
+    setIsEnded(true)
+    setShowPlayer(false)
+  }
 
   const handleClickContainer = () => {
     setShowPlayer(true)
@@ -17,17 +25,21 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   return (
     <>
       {showPlayer ? (
-        <PlayerContainer videoIdProps={video.id} isAutoPlay={true} />
+        <PlayerContainer
+          videoIdProps={video.id}
+          isAutoPlay={true}
+          setEnded={handleEndShow}
+        />
       ) : (
         <Container onClick={handleClickContainer}>
           <Img src={thumbnailUrl} alt="thumbnail" />
           <Content>
             <Title> {video.name}</Title>
-            <PlayLogo src="images/play.svg" />
+            <PlayLogo src={imgUrl} />
             <Footer>
               {isCurrentUser && (
                 <Invited>
-                  <NotificationAllIcon size="small" primaryColor="white" />{" "}
+                  <NotificationAllIcon size="small" primaryColor="white" />
                   You've been invited to watch this video.
                 </Invited>
               )}

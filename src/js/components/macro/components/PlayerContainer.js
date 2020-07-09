@@ -13,8 +13,12 @@ import {
 import io from "socket.io-client"
 const ENDPOINT = `${process.env.WSS_BASE_URL}/analytics`
 
-const PlayerContainer = ({ videoIdProps, isAutoPlay, showPlayer }) => {
-  console.log("AMMMI AUTOPLAY from coddntainer", isAutoPlay)
+const PlayerContainer = ({
+  videoIdProps,
+  isAutoPlay,
+  showPlayer,
+  setEnded,
+}) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = React.useState(true)
@@ -35,7 +39,6 @@ const PlayerContainer = ({ videoIdProps, isAutoPlay, showPlayer }) => {
           setLoading(false)
           const tokenData = await getDrmToken(videoIdProps, token)
           setVideoToken(tokenData.data.token)
-          console.log("wwwh", tokenData.data)
           setTokenLoaded(true)
         } catch (e) {
           console.error("Some error happened getting the play url", e)
@@ -101,14 +104,15 @@ const PlayerContainer = ({ videoIdProps, isAutoPlay, showPlayer }) => {
             videoElement.played
           )
         )
-        videoElement.addEventListener("ended", (event) =>
+        videoElement.addEventListener("ended", (event) => {
           eventEmitter.emit(
             ENDED,
             event,
             videoElement.currentTime,
             videoElement.played
           )
-        )
+          setEnded()
+        })
 
         return () => {
           videoElement.removeEventListener("loadedmetadata", () =>
@@ -147,8 +151,9 @@ const PlayerContainer = ({ videoIdProps, isAutoPlay, showPlayer }) => {
               videoElement.currentTime,
               videoElement.played
             )
-            setIsSocketConnection(false)
+            setEnded()
           })
+          setIsSocketConnection(false)
           socket.disconnect()
         }
       })
