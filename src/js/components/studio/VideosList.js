@@ -45,9 +45,9 @@ const VideosList = () => {
                   </GridColumn>
                   <GridColumn medium={5}>
                     <CardContainer>
-                      <h2>
+                      <h3>
                         <b>{video.name}</b>
-                      </h2>
+                      </h3>
                       <p>
                         <small>
                           Duration:{" "}
@@ -99,7 +99,6 @@ const VideoCard = styled.div`
 const CardContainer = styled.div`
   padding: 20px 5px 0px 5px;
   margin: 5px;
-  text-align: center;
   height: 100px;
 `
 const ThumbnailContainer = styled.div`
