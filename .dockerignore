@@ -1,0 +1,10 @@
+*.iml
+*.idea
+*.vscode
+.DS_Store
+node_modules
+*.pem
+credentials.json
+/public/js/react/
+/credentials2.json
+.env
