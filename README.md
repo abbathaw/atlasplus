@@ -2,6 +2,13 @@
 
 An Atlassian Connect App using Express.
 
+###docker stuff
+
+- build image
+  `docker build . -t atlasplus`
+- run image --net video-plus-macro_ace_net
+  `docker run --rm -p 3000:3000 --network video-plus-macro_ace_net --env-file .env atlasplus`
+
 ## Start
 
 - `npm install`

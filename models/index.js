@@ -6,7 +6,8 @@ const config = require("../db.js")
 const basename = path.basename(__filename)
 let db = {}
 
-const sequelize = new Sequelize(config.dbConfig)
+console.log("I have config details", config)
+const sequelize = new Sequelize(config.dbConfig.url, config.dbConfig)
 
 fs.readdirSync(__dirname)
   .filter((file) => {

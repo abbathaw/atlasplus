@@ -2,7 +2,7 @@
   "key": "atlasplus",
   "name": "Atlas Plus Video Studio",
   "description": "The ultimate video solution for all of your needs",
-  "baseUrl": "{{localBaseUrl}}",
+  "baseUrl": "{{localBaseUrl}}/",
   "links": {
     "self": "{{localBaseUrl}}/atlassian-connect.json",
     "homepage": "{{localBaseUrl}}/atlassian-connect.json"
