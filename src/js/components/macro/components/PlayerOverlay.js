@@ -6,7 +6,9 @@ import PlayerContainer from "./PlayerContainer"
 
 const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   const isCurrentUser =
-    assignedUsers.filter((users) => users.value === currentUser).length > 0
+    assignedUsers && Array.isArray(assignedUsers)
+      ? assignedUsers.filter((users) => users.value === currentUser).length > 0
+      : false
 
   const [showPlayer, setShowPlayer] = useState(false)
   const [isEnded, setIsEnded] = useState(false)
