@@ -4,6 +4,7 @@ import { tenantValidator } from "../services/tenantChecker"
 import { processSns } from "../controllers/snsController"
 import * as playerController from "../controllers/playerController"
 import * as drmController from "../controllers/drmController"
+import { seedEnrollments } from "../services/seed"
 const bodyParser = require("body-parser")
 
 export default function routes(app, addon) {
@@ -55,4 +56,13 @@ export default function routes(app, addon) {
     res.render("player-test")
   })
   app.post("/video-player-play-test", playerController.getPlayUrlTest)
+
+  app.get("/seed", (req, res) => {
+    // seedEnrollments(15, "53aee58c-986f-4f0c-999b-e165b060b2f5", 220).then(r =>
+    //     res.send("ok")
+    // ).catch(e => {
+    //   res.status(500).send("oops")
+    // })
+    res.send("ok")
+  })
 }

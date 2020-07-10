@@ -54,6 +54,7 @@
     "events": "^3.1.0",
     "express": "^4.16.4",
     "express-hbs": "^2.3.3",
+    "faker": "^4.1.0",
     "helmet": "^3.21.2",
     "lodash": "^4.17.17",
     "moment": "^2.27.0",

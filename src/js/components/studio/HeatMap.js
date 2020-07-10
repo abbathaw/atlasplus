@@ -116,7 +116,9 @@ const HeatMap = ({ videoViewData, viewer }) => {
         <GridColumn medium={2}>
           <StatContainer>
             <StatsLabel>Completion Rate</StatsLabel>
-            <Stats>{viewer ? Math.round(progressRate) : completionRate}%</Stats>
+            <Stats>
+              {viewer ? Math.round(progressRate) : Math.round(completionRate)}%
+            </Stats>
           </StatContainer>
         </GridColumn>
         <GridColumn medium={3}>

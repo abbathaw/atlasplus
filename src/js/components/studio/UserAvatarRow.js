@@ -5,6 +5,7 @@ import { Button } from "@atlaskit/button/dist/cjs/components/Button"
 import Avatar, { AvatarItem } from "@atlaskit/avatar"
 import Lozenge from "@atlaskit/lozenge"
 import Spinner from "@atlaskit/spinner"
+import faker from "faker"
 
 const UserAvatarRow = ({ enrollment, video, location }) => {
   const [user, setUser] = useState({})
@@ -16,30 +17,49 @@ const UserAvatarRow = ({ enrollment, video, location }) => {
         setUser(JSON.parse(body))
         setIsLoading(false)
       })
-      .catch((error) => console.log("error fetching user", error))
+      .catch((error) => {
+        console.log("error fetching user", error)
+        const pngid = Math.floor(Math.random() * 100) + 1
+        setUser({
+          displayName: faker.name.findName(),
+          fake: true,
+          profilePicture: {
+            path: `https://api.adorable.io/avatars/80/${pngid}.png`,
+          },
+        })
+        setIsLoading(false)
+      })
   }, [])
 
   const { openModal } = useVideoAnalyticsModalContext()
 
   return (
     <Card>
-      <div>
+      <NameContainer>
         {isLoading ? (
           <Spinner />
         ) : (
           <AvatarItem
-            avatar={<Avatar src={location + user.profilePicture.path} />}
+            avatar={
+              <Avatar
+                src={
+                  user.fake
+                    ? user.profilePicture.path
+                    : location + user.profilePicture.path
+                }
+              />
+            }
             primaryText={user.displayName}
           />
         )}
-      </div>
-      <div>
+      </NameContainer>
+      <StatusContainer>
         {enrollment.isCompleted ? (
           <Lozenge appearance={"success"}>Completed </Lozenge>
         ) : (
           <Lozenge appearance={"inprogress"}>In progress</Lozenge>
         )}
-      </div>
+      </StatusContainer>
       <div>
         <Button
           appearance={"default"}
@@ -56,7 +76,7 @@ export default UserAvatarRow
 
 export const Card = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: minmax(auto, 200px) 1fr 1fr;
   width: 600px;
   height: 40px;
   align-items: center;
@@ -72,4 +92,11 @@ export const Card = styled.div`
   &:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   }
+`
+const NameContainer = styled.div`
+  justify-self: start;
+`
+
+const StatusContainer = styled.div`
+  justify-self: center;
 `
