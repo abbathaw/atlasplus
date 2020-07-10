@@ -30,11 +30,12 @@ const processSnsPayload = async (payload) => {
     const message = JSON.parse(payload.Message)
     const { jobId: jobReference, status, outputGroupDetails } = message.detail
     console.log("SNS Message detail", message.detail)
-    const output = outputGroupDetails.filter(
-      (output) => output.type === "DASH_ISO_GROUP"
-    )
+
     let outputTargetDuration = 0
     try {
+      const output = outputGroupDetails.filter(
+        (output) => output.type === "DASH_ISO_GROUP"
+      )
       const duration = output[0].outputDetails[0].durationInMs
       outputTargetDuration = Math.floor(duration)
     } catch (e) {
