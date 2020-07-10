@@ -2,6 +2,7 @@
   "development": {
     "port": 3000,
     "errorTemplate": true,
+    "localBaseUrl": "$BASE_URL",
     "store": {
       "adapter": "sequelize",
       "dialect": "postgres",
@@ -15,7 +16,7 @@
   "production": {
     "port": "$PORT",
     "errorTemplate": true,
-    "localBaseUrl": "https://my-subdomain.herokuapp.com",
+    "localBaseUrl": "$BASE_URL",
     "store": {
       "adapter": "sequelize",
       "dialect": "postgres",
