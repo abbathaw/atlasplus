@@ -21,7 +21,6 @@ const VideoMacro = () => {
     AP.context.getToken(async (token) => {
       const decodedToken = atlJwt.decode(token, null, true)
       const tenantId = decodedToken.iss
-      console.log("got TenantId", tenantId)
       const userId = decodedToken.sub ? decodedToken.sub : ""
       setCurrentUserId(userId)
       setTenantId(tenantId)
@@ -31,7 +30,6 @@ const VideoMacro = () => {
   useEffect(() => {
     if (tenantId) {
       AP.confluence.getMacroData(function (data) {
-        console.log("users", data.users)
         setAssignedUsers(JSON.parse(data.users))
         setVideo(data.video)
         const videoObject = JSON.parse(data.video).value

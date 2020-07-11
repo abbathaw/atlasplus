@@ -4,10 +4,19 @@ An Atlassian Connect App using Express.
 
 ###docker stuff
 
+- build webpack `npm run build`
 - build image
   `docker build . -t atlasplus`
-- run image --net video-plus-macro_ace_net
-  `docker run --rm -p 3000:3000 --network video-plus-macro_ace_net --env-file .env atlasplus`
+- run image from docker-compose
+  `docker-compose up`
+
+  to deploy
+
+  - with your aws profile`aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 527728718473.dkr.ecr.us-west-2.amazonaws.com`
+
+- `docker tag atlasplus:latest 527728718473.dkr.ecr.us-west-2.amazonaws.com/atlasplus:latest`
+- `docker push 527728718473.dkr.ecr.us-west-2.amazonaws.com/atlasplus:latest`
+- create a new task..replace task in ecs service
 
 ## Start
 

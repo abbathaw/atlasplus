@@ -21,7 +21,7 @@ const VideoMacroEditor = () => {
       // get Space id from space key
       AP.request(`/rest/api/space/${spaceKey}`).then((data) => {
         let body = JSON.parse(data.body)
-        console.log("space id", body.id)
+
         //get Token and call backend
         AP.context.getToken(async (token) => {
           const { data: spaceVideos } = await axios.get(
@@ -53,7 +53,6 @@ const VideoMacroEditor = () => {
 
   const getMacroData = () => {
     AP.confluence.getMacroData(({ users, video }) => {
-      console.log("MACRO DATA EDITOR_________>", users, video)
       users && setAssignedUsers(JSON.parse(users))
       video && setSelectedVideo(JSON.parse(video))
     })
@@ -64,7 +63,7 @@ const VideoMacroEditor = () => {
       users: JSON.stringify(data.users),
       video: JSON.stringify(data.video),
     }
-    console.log("MACRO PARAMS________>", macroParams)
+
     AP.confluence.saveMacro(macroParams)
     AP.confluence.closeMacroEditor()
   }
