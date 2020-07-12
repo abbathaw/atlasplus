@@ -27,7 +27,7 @@ const UploadForm = ({ resetForm }) => {
   const showFlag = () => {
     AP.flag.create({
       title: "Video Successfully Uploaded",
-      body: "We will notify you once the video is ready.",
+      body: "You can check the processing status from the Videos list.",
       type: "success",
     })
   }
@@ -44,9 +44,6 @@ const UploadForm = ({ resetForm }) => {
       return null
     }
 
-    console.log("data title", title)
-    console.log("data file", file)
-
     if (title && file) {
       cancelToken.current = axios.CancelToken.source()
       setFileUploading(true)
@@ -61,11 +58,9 @@ const UploadForm = ({ resetForm }) => {
           const uploadTask = await uploadVideo(uploadData)
 
           if (uploadTask.status === 200) {
-            console.log("upload success")
-
             //Submit Success back to server
             const saved = await saveVideo(token, uploadData)
-            console.log("saved video", saved)
+
             refreshForm()
             showFlag()
           } else {
@@ -181,7 +176,7 @@ const UploadForm = ({ resetForm }) => {
         <div style={{ marginTop: "20px" }}>
           <Toggle size="large" onChange={toggleDrm} />{" "}
           <span style={{ verticalAlign: "text-bottom" }}>
-            Protect this video with DRM{" "}
+            Protect this video with Digital Rights Management
             <span
               data-tip="Digital Rights Management (currently supported only in chrome/firefox)"
               style={{ verticalAlign: "bottom" }}

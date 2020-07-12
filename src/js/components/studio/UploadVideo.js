@@ -7,13 +7,7 @@ const UploadVideo = () => {
   const [spaceKey, setSpaceKey] = useState("")
   const [showForm, setShowForm] = useState(true)
 
-  useEffect(() => {
-    // AP.context.getContext( (response) => {
-    //   setContext(response)
-    //   setSpaceKey(response.confluence.space.key)
-    // })
-    console.log("context", context)
-  }, [])
+  useEffect(() => {}, [])
 
   const handleReset = () => {
     setShowForm(false)

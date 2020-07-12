@@ -16,13 +16,6 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   const [jwtToken, setJwtToken] = useState("")
   const [isReady, setIsReady] = useState(false)
 
-  useEffect(() => {
-    AP.context.getToken(async function (token) {
-      setJwtToken(token)
-      setIsReady(true)
-    })
-  }, [])
-
   const handleEndShow = () => {
     setImgUrl("images/replay.svg")
     setIsEnded(true)
@@ -30,12 +23,16 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
   }
 
   const handleClickContainer = () => {
-    if (video.drm) {
-      const externalLink = `${process.env.BASE_URL}/external-player?title=${video.name}&videoId=${video.id}&isdrm=${video.drm}&jwt=${jwtToken}`
-      window.open(externalLink)
-    } else {
-      setShowPlayer(true)
-    }
+    AP.context.getToken(async function (token) {
+      setJwtToken(token)
+      setIsReady(true)
+      if (video.drm) {
+        const externalLink = `${process.env.BASE_URL}/external-player?title=${video.name}&videoId=${video.id}&isdrm=${video.drm}&jwt=${token}`
+        window.open(externalLink)
+      } else {
+        setShowPlayer(true)
+      }
+    })
   }
 
   return (

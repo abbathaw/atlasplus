@@ -1,5 +1,5 @@
 {
-  "key": "atlasplus",
+  "key": "atlasplus-staging",
   "name": "Atlas Plus Video Studio",
   "description": "The ultimate video solution for all of your needs",
   "baseUrl": "{{localBaseUrl}}/",
@@ -114,15 +114,6 @@
         "name": {
           "value": "Get Started"
         }
-      },
-      {
-        "url": "/configuration",
-        "key": "configuration-admin-page",
-        "location": "system.admin/atlasplus-plugin-admin-menu-section",
-        "weight": 105,
-        "name": {
-          "value": "Configuration"
-        }
       }
     ],
     "webSections": [
@@ -131,7 +122,7 @@
         "location": "system.admin",
         "weight": 100,
         "name": {
-          "value": "Atlas+"
+          "value": "Atlas+: Video Solutions"
         }
       }
     ],
@@ -140,13 +131,6 @@
       "key": "get-started-post-install",
       "name": {
         "value": "Get Started: Atlas+ Video Studio"
-      }
-    },
-    "configurePage": {
-      "url": "/configuration",
-      "key": "config-page-post-install",
-      "name": {
-        "value": "Atlas+ Configuration"
       }
     }
   }

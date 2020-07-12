@@ -20,7 +20,6 @@ const TestPlayerContainer = ({ video }) => {
       ;(async function getStuff(token) {
         try {
           const videoIdProps = video.id
-          console.log("videoId", videoIdProps)
           setVideoId(videoIdProps)
           const { data } = await getPlayUrl(videoIdProps, token)
           setPlayUrl(data.url)
@@ -28,7 +27,6 @@ const TestPlayerContainer = ({ video }) => {
           const tokenData = await getDrmToken(videoIdProps, token)
           setVideoToken(tokenData.data.token)
           setTokenLoaded(true)
-          console.log("got the stuff I want", tokenData.data.token)
         } catch (e) {
           console.error("Some error happened getting the play url", e)
           setError("An error happened")

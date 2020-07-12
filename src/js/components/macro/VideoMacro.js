@@ -34,7 +34,7 @@ const VideoMacro = () => {
         setVideo(data.video)
         const videoObject = JSON.parse(data.video).value
         let num = 1
-        const thumbnailUrl = `https://${process.env.S3_BUCKET_NAME}.s3-us-west-2.amazonaws.com/output/${tenantId}/${videoObject.id}/thumbnails/${videoObject.fileId}thumbnail.000000${num}.jpg`
+        const thumbnailUrl = `https://${process.env.CLOUDFRONT_DOMAIN}/output/${tenantId}/${videoObject.id}/thumbnails/${videoObject.fileId}thumbnail.000000${num}.jpg`
         setThumbnailUrl(thumbnailUrl)
         setVideo(videoObject)
         setIsLoading(false)

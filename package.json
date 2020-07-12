@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node -r dotenv/config -r esm app.js",
+    "start": "nodemon -r dotenv/config -r esm app.js",
     "lint": "eslint app.js routes",
     "build": "webpack",
     "dev": "npm-run-all --parallel start watch:build",

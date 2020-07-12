@@ -1,0 +1,38 @@
+/*h5 {*/
+/*    margin-bottom: 30px;*/
+/*}*/
+
+#atlasplus-logo {
+  width: 180px;
+}
+
+#atlasplus-seal {
+  margin-top: 30px;
+  width: 150px;
+}
+
+.atlasplus-container {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  width: 40%;
+}
+
+.atlasplus-container p {
+  margin: 0;
+  line-height: 2;
+}
+
+.atlasplus-divider {
+  border-bottom: 1px solid #ccc;
+  margin: 30px auto 30px auto;
+  width: 60%;
+}
+
+.atlasplus-screenshot {
+  border: thin black solid;
+  margin: 30px auto;
+  display: block;
+  width: 100%;
+  max-width: 500px;
+}

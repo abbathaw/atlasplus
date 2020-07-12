@@ -72,7 +72,6 @@ const Landing = ({ videoId, token, title, isDrm }) => {
   }, [])
 
   const handleEndShow = () => {
-    console.log("video ended")
     window.close()
   }
 

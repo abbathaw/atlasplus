@@ -14,13 +14,13 @@ export default function routes(app, addon) {
     res.redirect("/atlassian-connect.json")
   })
 
-  app.get("/get-started", addon.authenticate(), function (req, res) {
+  app.get("/get-started", function (req, res) {
     res.render("admin/get-started")
   })
 
-  app.get("/configuration", addon.authenticate(), function (req, res) {
-    res.render("admin/configuration")
-  })
+  // app.get("/configuration", addon.authenticate(), function (req, res) {
+  //   res.render("admin/configuration")
+  // })
 
   app.get(
     "/video-macro",

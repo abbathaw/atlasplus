@@ -11,7 +11,7 @@ export const Thumbnail = ({ video }) => {
   useEffect(() => {
     if (video && !objIsEmpty(video)) {
       let num = 1
-      const thumbnailUrl = `https://${process.env.S3_BUCKET_NAME}.s3-us-west-2.amazonaws.com/output/${video.tenantId}/${video.id}/thumbnails/${video.fileId}thumbnail.000000${num}.jpg`
+      const thumbnailUrl = `https://${process.env.CLOUDFRONT_DOMAIN}/output/${video.tenantId}/${video.id}/thumbnails/${video.fileId}thumbnail.000000${num}.jpg`
       setThumbnail(thumbnailUrl)
       setIsLoading(false)
     }

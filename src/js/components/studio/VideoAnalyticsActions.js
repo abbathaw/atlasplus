@@ -26,10 +26,6 @@ export const VideoAnalyticsActions = ({ token, video }) => {
       headers: { Authorization: `JWT ${token}` },
     })
 
-    console.log(
-      "an array of arrays representing users watched TimeRanges -------------->",
-      enrollments
-    )
     return enrollments
   }
 

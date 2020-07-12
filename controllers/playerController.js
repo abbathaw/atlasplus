@@ -19,8 +19,8 @@ export const getPlayUrl = async (req, res) => {
         res.status(401).send("Auth token mismatch for organization")
       }
 
-      const s3BucketUrl = `https://${process.env.S3_BUCKET_NAME}.s3-${process.env.AWS_REGION}.amazonaws.com`
-      const playUrl = `${s3BucketUrl}/output/${tenantId}/${videoId}/${video.fileId}.mpd`
+      const cdnURL = `https://${process.env.CLOUDFRONT_DOMAIN}`
+      const playUrl = `${cdnURL}/output/${tenantId}/${videoId}/${video.fileId}.mpd`
 
       res.json({ url: playUrl })
     } else {
@@ -39,8 +39,8 @@ export const getPlayUrlTest = async (req, res) => {
 
   await getVideo(videoId).then((video) => {
     if (video) {
-      const s3BucketUrl = `https://${process.env.S3_BUCKET_NAME}.s3-${process.env.AWS_REGION}.amazonaws.com`
-      const playUrl = `${s3BucketUrl}/output/${video.tenantId}/${videoId}/${video.fileId}.mpd`
+      const cdnUrl = `https://${process.env.CLOUDFRONT_DOMAIN}`
+      const playUrl = `${cdnUrl}/output/${video.tenantId}/${videoId}/${video.fileId}.mpd`
 
       res.json({ url: playUrl })
     } else {

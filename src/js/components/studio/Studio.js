@@ -30,12 +30,11 @@ const Studio = () => {
 
   useEffect(() => {
     AP.sizeToParent({ hideFooter: true }, () => {
-      console.log("resizeddddd")
+      console.log("Container Resized")
     })
   }, [])
 
-const openModal = (video, videoViewData, viewer = "") => {
-    console.log("Modal videoViewData", videoViewData)
+  const openModal = (video, videoViewData, viewer = "") => {
     setSelectedVideo(video)
     setIsAnalyticsModalOpen(true)
     viewer
@@ -50,7 +49,6 @@ const openModal = (video, videoViewData, viewer = "") => {
   }
 
   const loadWatchersTable = (video, videoViewData) => {
-    console.log("Loading Watchers Table with this data__>", videoViewData)
     setSelectedVideo(video)
     setSelectedVideoViewData(videoViewData)
     setIsUserAnalyticsTableDisplayed(true)
