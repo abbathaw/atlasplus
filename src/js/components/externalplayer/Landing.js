@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
   })
 )
 
-const Landing = ({ videoId, token, title, isDrm }) => {
+const Landing = ({ videoId, token, title, isDrm, isSubtitle }) => {
   const classes = useStyles()
   const [browser, setBrowser] = useState("")
   const [unSafeBrowser, setUnSafeBrowser] = useState(false)
@@ -93,6 +93,7 @@ const Landing = ({ videoId, token, title, isDrm }) => {
             setEnded={handleEndShow}
             jwtToken={token}
             isDrm={isDrm}
+            isSubtitle={isSubtitle}
           />
         </CardContent>
       </Card>
@@ -106,9 +107,16 @@ const videoId = wrapper.getAttribute("data-videoid")
 const token = wrapper.getAttribute("data-token")
 const title = wrapper.getAttribute("data-title")
 const isDrm = wrapper.getAttribute("data-isdrm")
+const isSubtitle = wrapper.getAttribute("data-issubtitle")
 wrapper
   ? ReactDOM.render(
-      <Landing videoId={videoId} token={token} title={title} isDrm={isDrm} />,
+      <Landing
+        videoId={videoId}
+        token={token}
+        title={title}
+        isDrm={isDrm}
+        isSubtitle={isSubtitle}
+      />,
       wrapper
     )
   : false

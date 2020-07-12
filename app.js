@@ -104,7 +104,7 @@ const server = http.createServer(app)
 import socketAnalytics from "./routes/analyticSockets"
 socketAnalytics(socketIo(server))
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
   server.listen(port, () => {
     console.log("App server running at http://" + os.hostname() + ":" + port)
 

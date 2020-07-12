@@ -19,6 +19,7 @@ const PlayerContainer = ({
   setEnded,
   jwtToken,
   isDrm,
+  isSubtitle,
 }) => {
   const [playUrl, setPlayUrl] = useState("")
   const [error, setError] = useState("")
@@ -176,6 +177,7 @@ const PlayerContainer = ({
               ref={controllerRef}
               drmToken={videoToken}
               videoId={videoId}
+              isSubtitle={isSubtitle}
             />
           )}
         </div>

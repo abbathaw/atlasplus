@@ -47,7 +47,8 @@ export default function routes(app, addon) {
     const videoId = req.query.videoId
     const title = req.query.title
     const isdrm = req.query.isdrm
-    res.render("player-external", { token, videoId, title, isdrm })
+    const issubtitle = req.query.issubtitle
+    res.render("player-external", { token, videoId, title, isdrm, issubtitle })
   })
 
   //testing purposes only

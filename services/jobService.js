@@ -74,7 +74,9 @@ export const updateJob = async (jobId, status, outputDuration) => {
 const triggerTranscoder = (videoId) => {
   db.Video.findByPk(videoId)
     .then(async (video) => {
-      await triggerTranscodeJob(video.tenantId, video.id, video.fileId)
+      if (video.autoSubtitle) {
+        await triggerTranscodeJob(video.tenantId, video.id, video.fileId)
+      }
     })
     .catch((e) => {
       console.error("Transcoder job couldn't be triggered", e)

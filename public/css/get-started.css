@@ -36,3 +36,8 @@
   width: 100%;
   max-width: 500px;
 }
+
+.attributes {
+  text-align: center;
+  font-size: 8px;
+}

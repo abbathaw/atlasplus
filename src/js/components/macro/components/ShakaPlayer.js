@@ -14,7 +14,7 @@ import axios from "axios"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay, drmToken, videoId }, ref) => {
+const ShakaPlayer = ({ src, autoPlay, drmToken, videoId, isSubtitle }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -77,28 +77,30 @@ const ShakaPlayer = ({ src, autoPlay, drmToken, videoId }, ref) => {
         .load(src)
         .then(async () => {
           try {
-            const maybeSubtitleFile = `https://${process.env.CLOUDFRONT_DOMAIN}/output/subtitles/${videoId}.vtt`
-            const checkFileExists = axios
-              .get(maybeSubtitleFile)
-              .then(async function (response) {
-                // handle success
-                console.log("Found subtitle file")
-                const subtitle = await player.addTextTrack(
-                  maybeSubtitleFile,
-                  "eng",
-                  "subtitle",
-                  "text/vtt"
-                )
-                player.selectTextTrack(subtitle)
-                player.setTextTrackVisibility(true)
-              })
-              .catch(function (error) {
-                // handle error
-                console.log(error)
-              })
+            if (isSubtitle) {
+              const maybeSubtitleFile = `https://${process.env.CLOUDFRONT_DOMAIN}/output/subtitles/${videoId}.vtt`
+              const checkFileExists = axios
+                .get(maybeSubtitleFile)
+                .then(async function (response) {
+                  // handle success
+                  console.log("Found subtitle file")
+                  const subtitle = await player.addTextTrack(
+                    maybeSubtitleFile,
+                    "eng",
+                    "subtitle",
+                    "text/vtt"
+                  )
+                  player.selectTextTrack(subtitle)
+                  player.setTextTrackVisibility(true)
+                })
+                .catch(function (error) {
+                  // handle error
+                  console.log(error)
+                })
+            }
           } catch (err) {
             console.log(
-              "Error happened getting subitile file. Shouldnt affect playback",
+              "Error happened getting subtitle file. Shouldnt affect playback",
               err
             )
           }
@@ -109,7 +111,7 @@ const ShakaPlayer = ({ src, autoPlay, drmToken, videoId }, ref) => {
           console.log("shaka player error", error)
         })
     }
-  }, [src])
+  }, [src, isSubtitle])
 
   // Define a handle for easily referencing Shaka's player & ui API's.
   React.useImperativeHandle(ref, () => ({

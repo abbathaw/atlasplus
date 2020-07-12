@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    autoSubtitle: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   })
 
   Video.associate = (models) => {

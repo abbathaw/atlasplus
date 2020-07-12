@@ -19,6 +19,12 @@ const getUploadPresignedUrl = async (req, res) => {
   const { key: spaceKey, id: spaceId } = space
 
   const fileType = req.body.fileType
+  const fileSize = req.body.fileSize
+
+  if (fileSize > 350000000) {
+    return res.status(405).send("File size exceeds free limit")
+  }
+
   const extension = getFileExtension(fileType)
 
   const fileName = uuidv4()
@@ -52,6 +58,7 @@ const saveVideo = async (req, res) => {
   const title = req.body.title
   const fileType = req.body.fileType
   const isDRM = req.body.isDRM
+  const isAutoSubtitle = req.body.isAutoSubtitle
   const { fileSize } = req.body
   const size = fileSize && !isNaN(fileSize) ? fileSize / 1000000 : 0
 
@@ -66,7 +73,8 @@ const saveVideo = async (req, res) => {
       title,
       size,
       fileType,
-      isDRM
+      isDRM,
+      isAutoSubtitle
     )
     await triggerEncoderJob(
       tenantId,

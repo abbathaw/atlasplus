@@ -13,7 +13,8 @@ const saveNewVideo = async (
   name,
   size,
   fileType,
-  drm
+  drm,
+  autoSubtitle
 ) => {
   return await db.Video.create({
     id: videoId,
@@ -26,6 +27,7 @@ const saveNewVideo = async (
     sourceFileType: fileType,
     spaceId,
     drm,
+    autoSubtitle,
   }).then((created) => {
     console.log("created a new tenant with tenantI", created)
   })

@@ -27,7 +27,7 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
       setJwtToken(token)
       setIsReady(true)
       if (video.drm) {
-        const externalLink = `${process.env.BASE_URL}/external-player?title=${video.name}&videoId=${video.id}&isdrm=${video.drm}&jwt=${token}`
+        const externalLink = `${process.env.BASE_URL}/external-player?title=${video.name}&videoId=${video.id}&isdrm=${video.drm}&issubtitle=${video.autoSubtitle}&jwt=${token}`
         window.open(externalLink)
       } else {
         setShowPlayer(true)
@@ -44,6 +44,7 @@ const PlayerOverlay = ({ video, thumbnailUrl, assignedUsers, currentUser }) => {
           setEnded={handleEndShow}
           jwtToken={jwtToken}
           isDrm={video.drm}
+          isSubtitle={video.autoSubtitle}
         />
       ) : (
         <Container onClick={handleClickContainer}>

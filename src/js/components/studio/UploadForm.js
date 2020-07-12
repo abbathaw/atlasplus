@@ -17,6 +17,7 @@ const UploadForm = ({ resetForm }) => {
   const [title, setTitle] = useState("")
   const [file, setFile] = useState(null)
   const [isDRM, setIsDRM] = useState(false)
+  const [isAutoSubtitle, setIsAutoSubtitle] = useState(false)
   const [error, setError] = useState("")
   const [fileUploading, setFileUploading] = useState(false)
   const [loaded, setLoaded] = useState(0)
@@ -32,6 +33,19 @@ const UploadForm = ({ resetForm }) => {
     })
   }
 
+  const showErrorFlag = (title, body, flagType = "error") => {
+    AP.flag.create({
+      title: title,
+      body: body,
+      type: flagType,
+    })
+  }
+
+  const toggleAutoSubtitles = () => {
+    const value = !isAutoSubtitle
+    setIsAutoSubtitle(value)
+  }
+
   const toggleDrm = () => {
     const value = !isDRM
     setIsDRM(value)
@@ -45,6 +59,15 @@ const UploadForm = ({ resetForm }) => {
     }
 
     if (title && file) {
+      if (file.size > 350000000) {
+        console.log("file size", file.size)
+        showErrorFlag(
+          "File size exceeds the current limit set",
+          "We've put this limitation during this free trial period. Please choose a smaller sized video.",
+          "warning"
+        )
+        return null
+      }
       cancelToken.current = axios.CancelToken.source()
       setFileUploading(true)
 
@@ -68,7 +91,11 @@ const UploadForm = ({ resetForm }) => {
             setError("An error occurred while uploading the file")
           }
         } catch (e) {
-          console.error("someError", e)
+          console.error("An error occurred", e)
+          showErrorFlag(
+            "An error occurred",
+            "An error occurred during the upload attempt. Please try again later."
+          )
         }
       })
     } else {
@@ -79,6 +106,7 @@ const UploadForm = ({ resetForm }) => {
   const getUploadData = async (token) => {
     const body = {
       fileType: file.type,
+      fileSize: file.size,
     }
     const headers = { Authorization: `JWT ${token}` }
     return await axios.post(`video-studio/getPresignedUploadUrl`, body, {
@@ -107,6 +135,7 @@ const UploadForm = ({ resetForm }) => {
       fileSize: file.size,
       fileType: file.type,
       isDRM,
+      isAutoSubtitle,
     }
     const headers = { Authorization: `JWT ${token}` }
     return await axios.post(`video-studio/saveVideo`, body, { headers })
@@ -179,6 +208,19 @@ const UploadForm = ({ resetForm }) => {
             Protect this video with Digital Rights Management
             <span
               data-tip="Digital Rights Management (currently supported only in chrome/firefox)"
+              style={{ verticalAlign: "bottom" }}
+            >
+              <EditorPanelIcon size="medium" />
+            </span>
+          </span>
+          <ReactTooltip />
+        </div>
+        <div style={{ marginTop: "20px" }}>
+          <Toggle size="large" onChange={toggleAutoSubtitles} />{" "}
+          <span style={{ verticalAlign: "text-bottom" }}>
+            Generate Auto Subtitles
+            <span
+              data-tip="Automatic subtitles generator using Speech to Text AI models (currently only English supported)"
               style={{ verticalAlign: "bottom" }}
             >
               <EditorPanelIcon size="medium" />
