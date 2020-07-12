@@ -175,6 +175,7 @@ const PlayerContainer = ({
               src={playUrl}
               ref={controllerRef}
               drmToken={videoToken}
+              videoId={videoId}
             />
           )}
         </div>

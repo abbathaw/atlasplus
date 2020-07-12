@@ -1,5 +1,5 @@
 import db from "../models"
-import { triggerMediaConvertJob } from "./aws"
+import { triggerMediaConvertJob, triggerTranscodeJob } from "./aws"
 const { Op } = require("sequelize")
 
 export const triggerEncoderJob = async (
@@ -53,10 +53,11 @@ export const updateJob = async (jobId, status, outputDuration) => {
       db.Video.update(
         { status: "ready", durationInMs: outputDuration },
         { where: { id: job.videoId } }
-      ).then((rows) => {
+      ).then(async (rows) => {
         console.log(
           `Video id ${job.videoId} status updated to ready. Rows affected ${rows}.`
         )
+        await triggerTranscoder(job.videoId)
       })
     })
   }
@@ -68,4 +69,14 @@ export const updateJob = async (jobId, status, outputDuration) => {
       )
     }
   )
+}
+
+const triggerTranscoder = (videoId) => {
+  db.Video.findByPk(videoId)
+    .then(async (video) => {
+      await triggerTranscodeJob(video.tenantId, video.id, video.fileId)
+    })
+    .catch((e) => {
+      console.error("Transcoder job couldn't be triggered", e)
+    })
 }

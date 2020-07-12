@@ -280,6 +280,49 @@ export const getJobTemplateWithDRM = (input, output, videoId) => {
             },
           },
         },
+        {
+          CustomName: "audio-only",
+          Name: "File Group",
+          Outputs: [
+            {
+              ContainerSettings: {
+                Container: "MP4",
+                Mp4Settings: {
+                  CslgAtom: "INCLUDE",
+                  CttsVersion: 0,
+                  FreeSpaceBox: "EXCLUDE",
+                  MoovPlacement: "PROGRESSIVE_DOWNLOAD",
+                },
+              },
+              AudioDescriptions: [
+                {
+                  AudioTypeControl: "FOLLOW_INPUT",
+                  AudioSourceName: "Audio Selector 1",
+                  CodecSettings: {
+                    Codec: "AAC",
+                    AacSettings: {
+                      AudioDescriptionBroadcasterMix: "NORMAL",
+                      Bitrate: 96000,
+                      RateControlMode: "CBR",
+                      CodecProfile: "LC",
+                      CodingMode: "CODING_MODE_2_0",
+                      RawFormat: "NONE",
+                      SampleRate: 48000,
+                      Specification: "MPEG4",
+                    },
+                  },
+                  LanguageCodeControl: "FOLLOW_INPUT",
+                },
+              ],
+            },
+          ],
+          OutputGroupSettings: {
+            Type: "FILE_GROUP_SETTINGS",
+            FileGroupSettings: {
+              Destination: `${output}audio/`,
+            },
+          },
+        },
       ],
       AdAvailOffset: 0,
       Inputs: [

@@ -1,5 +1,6 @@
 import React from "react"
 import shaka from "shaka-player/dist/shaka-player.ui"
+import axios from "axios"
 
 /**
  * A React component for shaka-player.
@@ -13,7 +14,7 @@ import shaka from "shaka-player/dist/shaka-player.ui"
  * @constructor
  */
 
-const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
+const ShakaPlayer = ({ src, autoPlay, drmToken, videoId }, ref) => {
   const uiContainerRef = React.useRef(null)
   const videoRef = React.useRef(null)
   const controller = React.useRef({})
@@ -72,7 +73,41 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
   React.useEffect(() => {
     const { player } = controller.current
     if (player) {
-      player.load(src)
+      player
+        .load(src)
+        .then(async () => {
+          try {
+            const maybeSubtitleFile = `https://${process.env.CLOUDFRONT_DOMAIN}/output/subtitles/${videoId}.vtt`
+            const checkFileExists = axios
+              .get(maybeSubtitleFile)
+              .then(async function (response) {
+                // handle success
+                console.log("Found subtitle file")
+                const subtitle = await player.addTextTrack(
+                  maybeSubtitleFile,
+                  "eng",
+                  "subtitle",
+                  "text/vtt"
+                )
+                player.selectTextTrack(subtitle)
+                player.setTextTrackVisibility(true)
+              })
+              .catch(function (error) {
+                // handle error
+                console.log(error)
+              })
+          } catch (err) {
+            console.log(
+              "Error happened getting subitile file. Shouldnt affect playback",
+              err
+            )
+          }
+
+          console.log("player", player.getTextTracks())
+        })
+        .catch((error) => {
+          console.log("shaka player error", error)
+        })
     }
   }, [src])
 
@@ -99,7 +134,9 @@ const ShakaPlayer = ({ src, autoPlay, drmToken }, ref) => {
         width="100%"
         height="100%"
         style={{ maxWidth: "100%", maxHeight: "480px" }}
-      />
+      >
+        {/*<track src="https://atlasplus.ap.ngrok.io/subtitles/test.vtt" kind="subtitles" srcLang="en" label="English" />*/}
+      </video>
     </div>
   )
 }

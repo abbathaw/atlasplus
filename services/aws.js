@@ -1,5 +1,6 @@
 import { getJobTemplate } from "./mediaconvert/jobTemplate"
 import { getJobTemplateWithDRM } from "./mediaconvert/jobTemplateDrm"
+import { getTranscribeJob } from "./transcribe/transcribeJobTemplate"
 
 const AWS = require("aws-sdk")
 export const UPLOAD_PREFIX = "source"
@@ -84,5 +85,34 @@ export const getThumbnails = (tenantId, videoId, cb) => {
       // TODO: Refactor with Promise.all() to get all objects (all thumbnails)
       cb(await s3.getSignedUrlPromise("getObject", getObjectParams))
     }
+  })
+}
+
+export const triggerTranscodeJob = (tenantId, videoId, fileId) => {
+  AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  })
+
+  console.log(`Triggering transcode job for ${tenantId} and videoId ${videoId}`)
+
+  const transcribeService = new AWS.TranscribeService({
+    apiVersion: "2017-10-26",
+  })
+
+  const bucket = process.env.S3_BUCKET_NAME
+  const input = `s3://${bucket}/${OUTPUT_PREFIX}/${tenantId}/${videoId}/audio/${fileId}.mp4`
+  const output = process.env.S3_BUCKET_NAME_SUBTITLES
+
+  const jobParams = getTranscribeJob(input, output, videoId)
+
+  return transcribeService.startTranscriptionJob(jobParams, function (
+    err,
+    data
+  ) {
+    if (err) console.log("transcription error", err, err.stack)
+    // an error occurred
+    else console.log("transcription ok", data) // successful response
   })
 }

@@ -4,7 +4,6 @@ import { tenantValidator } from "../services/tenantChecker"
 import { processSns } from "../controllers/snsController"
 import * as playerController from "../controllers/playerController"
 import * as drmController from "../controllers/drmController"
-import { seedEnrollments } from "../services/seed"
 const bodyParser = require("body-parser")
 
 export default function routes(app, addon) {
