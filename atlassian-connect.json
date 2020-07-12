@@ -1,5 +1,5 @@
 {
-  "key": "atlasplus-staging",
+  "key": "atlasplus",
   "name": "Atlas Plus Video Studio",
   "description": "The ultimate video solution for all of your needs",
   "baseUrl": "{{localBaseUrl}}/",

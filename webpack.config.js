@@ -3,7 +3,7 @@ const OUTPUT_DIR = path.join(__dirname, "public/js/react")
 const Dotenv = require("dotenv-webpack")
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   devtool: false,
   entry: {
     Studio: "./src/js/components/studio/Studio.js",
